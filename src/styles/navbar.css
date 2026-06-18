@@ -1,0 +1,29 @@
+.top-navbar {
+  background: #082A78;
+  padding: 12px 0;
+}
+
+.brand-logo {
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.brand-logo:hover {
+  color: #ffffff;
+}
+
+.search-box {
+  border-radius: 8px;
+}
+
+.nav-link-custom {
+  color: #ffffff !important;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-link-custom:hover {
+  color: #AFC0DF !important;
+}
