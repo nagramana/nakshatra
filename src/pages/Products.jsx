@@ -1,18 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductFilter from "../components/ProductFilter";
 
-import productsData from "../data/products";
+
 
 import { useCart } from "../context/CartContext";
+import axios from "axios";
+
+const API_URL =
+  "https://nakshatra-mart-backend.onrender.com";
+
 
 function Products() {
-  const [products, setProducts] =
-    useState(productsData);
+  const [allProducts, setAllProducts] =
+  useState([]);
+
+const [products, setProducts] =
+  useState([]);
 
   const { addToCart } = useCart();
+
+  useEffect(() => {
+  fetchProducts();
+}, []);
+
+const fetchProducts = async () => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/api/products`
+    );
+
+    console.log(response.data);
+
+    setAllProducts(response.data);
+setProducts(response.data);
+  } catch (error) {
+    console.log(
+      "Error fetching products",
+      error
+    );
+  }
+};
 
   return (
     <>
@@ -31,9 +61,9 @@ function Products() {
         </h1>
 
         <ProductFilter
-          products={productsData}
-          onFilter={setProducts}
-        />
+  products={allProducts}
+  onFilter={setProducts}
+/>
 
         <div className="mb-3">
           <h5>
@@ -63,9 +93,11 @@ function Products() {
 
                 <div className="card-body">
 
-                  <span className="badge bg-success">
-                    {product.discount}
-                  </span>
+                  {product.discount && (
+  <span className="badge bg-success">
+    {product.discount}
+  </span>
+)}
 
                   <h5 className="mt-2">
                     {product.name}
@@ -76,8 +108,8 @@ function Products() {
                   </p>
 
                   <p>
-                    ⭐ {product.rating}
-                  </p>
+  Stock: {product.stock}
+</p>
 
                   <h6>
                     ₹{product.price}

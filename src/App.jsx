@@ -1,4 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -15,16 +19,25 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
-        <Route path="/products" element={<Products />} />
+        <Route
+          path="/products"
+          element={<Products />}
+        />
 
         <Route
           path="/product/:id"
           element={<ProductDetails />}
         />
 
-        <Route path="/cart" element={<Cart />} />
+        <Route
+          path="/cart"
+          element={<Cart />}
+        />
 
         <Route
           path="/checkout"

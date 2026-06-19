@@ -28,40 +28,151 @@ export const OrderProvider = ({ children }) => {
     );
   }, [orders]);
 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOrders((prevOrders) =>
+        prevOrders.map((order) => {
+          const createdTime =
+            new Date(
+              order.createdAt
+            ).getTime();
+
+          const now =
+            new Date().getTime();
+
+          const hoursPassed =
+            (now - createdTime) /
+            (1000 * 60 * 60);
+
+          let status =
+            "Order Placed";
+
+          let progress = 25;
+
+          if (hoursPassed >= 45) {
+            status = "Confirmed";
+            progress = 50;
+          }
+
+          if (hoursPassed >= 90) {
+            status = "Shipped";
+            progress = 75;
+          }
+
+          if (hoursPassed >= 135) {
+            status = "Delivered";
+            progress = 100;
+          }
+
+          return {
+            ...order,
+            orderStatus: status,
+            progress,
+          };
+        })
+      );
+    }, 60000);
+
+    return () =>
+      clearInterval(interval);
+  }, []);
+
   // Place Order
-  const placeOrder = (orderData) => {
-    const newOrder = {
-      ...orderData,
+//   useEffect(() => {
+//   const interval = setInterval(() => {
+//     setOrders((prevOrders) =>
+//       prevOrders.map((order) => {
+//         const createdTime =
+//           new Date(order.createdAt).getTime();
 
-      orderStatus: "Order Placed",
+//         const now = Date.now();
 
-      paymentMethod:
-        "Cash On Delivery",
+//         const hoursPassed =
+//           (now - createdTime) /
+//           (1000 * 60 * 60);
 
-      createdAt:
-        new Date().toLocaleString(),
+//         let status =
+//           "Order Placed";
 
-      returnEligible: true,
+//         let progress = 25;
 
-      returnRequested: false,
+//         if (hoursPassed >= 45) {
+//           status = "Confirmed";
+//           progress = 50;
+//         }
 
-      returnStatus: null,
+//         if (hoursPassed >= 90) {
+//           status = "Shipped";
+//           progress = 75;
+//         }
 
-      trackingSteps: [
-        "Order Placed",
-        "Confirmed",
-        "Packed",
-        "Shipped",
-        "Out For Delivery",
-        "Delivered",
-      ],
-    };
+//         if (hoursPassed >= 135) {
+//           status = "Delivered";
+//           progress = 100;
+//         }
 
-    setOrders((prevOrders) => [
-      newOrder,
-      ...prevOrders,
-    ]);
+//         return {
+//           ...order,
+//           orderStatus: status,
+//           progress,
+//         };
+//       })
+//     );
+//   }, 60000);
+
+//   return () =>
+//     clearInterval(interval);
+// }, []);
+
+// Place Order
+const placeOrder = (orderData) => {
+  const newOrder = {
+    ...orderData,
+
+    items:
+      orderData.items ||
+      orderData.cartItems ||
+      [],
+
+    customer:
+      orderData.customer || {},
+
+    total:
+      orderData.total || 0,
+
+    orderStatus:
+      "Order Placed",
+
+    paymentMethod:
+      "Cash On Delivery",
+
+    createdAt:
+      new Date().toLocaleString(),
+
+    progress: 25,
+
+    returnEligible: true,
+
+    returnRequested: false,
+
+    returnStatus: null,
+
+    trackingSteps: [
+      "Order Placed",
+      "Confirmed",
+      "Packed",
+      "Shipped",
+      "Out For Delivery",
+      "Delivered",
+    ],
   };
+
+  setOrders((prevOrders) => [
+    newOrder,
+    ...prevOrders,
+  ]);
+};
 
   // Update Status
   const updateOrderStatus = (
@@ -72,9 +183,9 @@ export const OrderProvider = ({ children }) => {
       prevOrders.map((order) =>
         order.id === orderId
           ? {
-              ...order,
-              orderStatus: newStatus,
-            }
+            ...order,
+            orderStatus: newStatus,
+          }
           : order
       )
     );
@@ -82,17 +193,20 @@ export const OrderProvider = ({ children }) => {
 
   // Return Request
   const requestReturn = (
-    orderId
+    orderId,
+    reason
   ) => {
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
         order.id === orderId
           ? {
-              ...order,
-              returnRequested: true,
-              returnStatus:
-                "Pending",
-            }
+            ...order,
+            returnRequested: true,
+            returnStatus:
+              "Pending",
+            returnReason:
+              reason,
+          }
           : order
       )
     );
@@ -106,10 +220,12 @@ export const OrderProvider = ({ children }) => {
       prevOrders.map((order) =>
         order.id === orderId
           ? {
-              ...order,
-              returnStatus:
-                "Approved",
-            }
+            ...order,
+            returnStatus:
+              "Approved",
+            orderStatus:
+              "Order Returned",
+          }
           : order
       )
     );
@@ -123,10 +239,10 @@ export const OrderProvider = ({ children }) => {
       prevOrders.map((order) =>
         order.id === orderId
           ? {
-              ...order,
-              returnStatus:
-                "Rejected",
-            }
+            ...order,
+            returnStatus:
+              "Rejected",
+          }
           : order
       )
     );

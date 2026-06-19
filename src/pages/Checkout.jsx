@@ -8,33 +8,35 @@ import { useNavigate } from "react-router-dom";
 function Checkout() {
   const navigate = useNavigate();
 
-  const { cartItems, totalPrice, clearCart } = useCart();
-  const { placeOrder } = useOrders();
+  const {
+    cartItems,
+    totalPrice,
+    clearCart,
+  } = useCart();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
-  });
+  const { placeOrder } =
+    useOrders();
+
+  const [formData, setFormData] =
+    useState({
+      name: "",
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+      pincode: "",
+    });
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]:
+        e.target.value,
     });
   };
 
-  const totalGST = cartItems.reduce(
-    (total, item) =>
-      total +
-      ((item.price * item.quantity) * item.gst) / 100,
-    0
-  );
-
-  const grandTotal = totalPrice + totalGST;
+  const grandTotal =
+    totalPrice;
 
   const handleOrder = () => {
     if (
@@ -45,7 +47,9 @@ function Checkout() {
       !formData.state ||
       !formData.pincode
     ) {
-      alert("Please fill all fields");
+      alert(
+        "Please fill all fields"
+      );
       return;
     }
 
@@ -73,17 +77,31 @@ function Checkout() {
     <>
       <Navbar />
 
-      <div className="container py-5">
-        <h2 className="mb-4">Checkout</h2>
+      <div
+        className="container py-5"
+      >
+        <h2
+          className="mb-4 fw-bold"
+          style={{
+            color: "#082A78",
+          }}
+        >
+          Checkout
+        </h2>
 
         <div className="row">
-          {/* Customer Details */}
-          <div className="col-md-8">
-            <div className="card shadow-sm">
+
+          {/* Delivery Address */}
+
+          <div className="col-lg-8">
+
+            <div className="card shadow-sm border-0">
+
               <div className="card-body">
-                <h4 className="mb-4">
+
+                <h3 className="mb-4">
                   Delivery Address
-                </h4>
+                </h3>
 
                 <input
                   type="text"
@@ -91,7 +109,9 @@ function Checkout() {
                   placeholder="Full Name"
                   name="name"
                   value={formData.name}
-                  onChange={handleChange}
+                  onChange={
+                    handleChange
+                  }
                 />
 
                 <input
@@ -100,16 +120,22 @@ function Checkout() {
                   placeholder="Phone Number"
                   name="phone"
                   value={formData.phone}
-                  onChange={handleChange}
+                  onChange={
+                    handleChange
+                  }
                 />
 
                 <textarea
                   className="form-control mb-3"
-                  rows="3"
-                  placeholder="Address"
+                  rows="4"
+                  placeholder="Full Address"
                   name="address"
-                  value={formData.address}
-                  onChange={handleChange}
+                  value={
+                    formData.address
+                  }
+                  onChange={
+                    handleChange
+                  }
                 />
 
                 <input
@@ -118,7 +144,9 @@ function Checkout() {
                   placeholder="City"
                   name="city"
                   value={formData.city}
-                  onChange={handleChange}
+                  onChange={
+                    handleChange
+                  }
                 />
 
                 <input
@@ -127,7 +155,9 @@ function Checkout() {
                   placeholder="State"
                   name="state"
                   value={formData.state}
-                  onChange={handleChange}
+                  onChange={
+                    handleChange
+                  }
                 />
 
                 <input
@@ -135,59 +165,139 @@ function Checkout() {
                   className="form-control"
                   placeholder="Pincode"
                   name="pincode"
-                  value={formData.pincode}
-                  onChange={handleChange}
+                  value={
+                    formData.pincode
+                  }
+                  onChange={
+                    handleChange
+                  }
                 />
+
               </div>
+
             </div>
+
           </div>
 
           {/* Order Summary */}
-          <div className="col-md-4">
-            <div className="card shadow">
+
+          <div className="col-lg-4">
+
+            <div className="card shadow border-0">
+
               <div className="card-body">
-                <h4>Order Summary</h4>
+
+                <h3
+                  style={{
+                    fontWeight:
+                      "700",
+                  }}
+                >
+                  Order Summary
+                </h3>
 
                 <hr />
 
-                <p>
-                  Products: {cartItems.length}
-                </p>
+                <div className="d-flex justify-content-between mb-2">
+                  <span>
+                    Products
+                  </span>
 
-                <p>
-                  Product Total:
-                  ₹{totalPrice.toFixed(2)}
-                </p>
+                  <strong>
+                    {
+                      cartItems.length
+                    }
+                  </strong>
+                </div>
 
-                <p>
-                  GST Total:
-                  ₹{totalGST.toFixed(2)}
-                </p>
+                <div className="d-flex justify-content-between mb-2">
+                  <span>
+                    Delivery
+                  </span>
+
+                  <strong
+                    style={{
+                      color:
+                        "green",
+                    }}
+                  >
+                    FREE
+                  </strong>
+                </div>
+
+                <div className="d-flex justify-content-between mb-2">
+                  <span>
+                    Product Total
+                  </span>
+
+                  <strong>
+                    ₹
+                    {totalPrice.toFixed(
+                      2
+                    )}
+                  </strong>
+                </div>
 
                 <hr />
 
-                <h5 className="text-primary">
-                  Grand Total:
-                  ₹{grandTotal.toFixed(2)}
-                </h5>
+                <div className="d-flex justify-content-between">
+
+                  <h4>
+                    Order Total
+                  </h4>
+
+                  <h4
+                    style={{
+                      color:
+                        "#B12704",
+                      fontWeight:
+                        "700",
+                    }}
+                  >
+                    ₹
+                    {grandTotal.toFixed(
+                      2
+                    )}
+                  </h4>
+
+                </div>
 
                 <hr />
 
-                <p>Payment Method</p>
+                <h6 className="mb-3">
+                  Payment Method
+                </h6>
 
                 <div className="alert alert-success">
-                  Cash On Delivery (COD)
+                  Cash On Delivery
+                  (COD)
                 </div>
 
                 <button
-                  className="btn btn-success w-100"
-                  onClick={handleOrder}
+                  className="btn w-100"
+                  style={{
+                    background:
+                      "#FFD814",
+                    color:
+                      "#111",
+                    fontWeight:
+                      "700",
+                    border:
+                      "1px solid #FCD200",
+                  }}
+                  onClick={
+                    handleOrder
+                  }
                 >
-                  Place Order
+                  Place Your Order
                 </button>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
       </div>
 

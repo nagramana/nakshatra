@@ -8,27 +8,41 @@ function ProductCard({ product }) {
   const handleAddToCart = () => {
     addToCart(product);
 
-    alert(`${product.name} added to cart successfully`);
+    alert(
+      `${product.name} added to cart successfully`
+    );
   };
 
+  const gst = product.gst || 0;
+
   const gstAmount =
-    (product.price * product.gst) / 100;
+    (Number(product.price) * gst) / 100;
 
   const totalPrice =
-    product.price + gstAmount;
+    Number(product.price) + gstAmount;
 
   return (
     <div className="product-card">
 
-      <div style={{ position: "relative" }}>
-        <span className="discount-badge">
-          {product.discount}
-        </span>
+      <div
+        style={{
+          position: "relative",
+        }}
+      >
+        {product.discount && (
+          <span className="discount-badge">
+            {product.discount}
+          </span>
+        )}
 
         <img
           className="product-image"
           src={product.image}
           alt={product.name}
+          onError={(e) => {
+            e.target.src =
+              "https://via.placeholder.com/300x220?text=No+Image";
+          }}
         />
       </div>
 
@@ -39,12 +53,24 @@ function ProductCard({ product }) {
         </h3>
 
         <p>
-          Base Price: ₹{product.price}
+          Category:{" "}
+          {product.category || "General"}
         </p>
 
         <p>
-          GST ({product.gst}%):
-          ₹{gstAmount.toFixed(2)}
+          Price: ₹
+          {Number(product.price).toFixed(
+            2
+          )}
+        </p>
+
+        <p>
+          Stock: {product.stock}
+        </p>
+
+        <p>
+          GST ({gst}%): ₹
+          {gstAmount.toFixed(2)}
         </p>
 
         <h4
@@ -53,7 +79,8 @@ function ProductCard({ product }) {
             fontWeight: "700",
           }}
         >
-          Total: ₹{totalPrice.toFixed(2)}
+          Total: ₹
+          {totalPrice.toFixed(2)}
         </h4>
 
         <div
@@ -63,7 +90,6 @@ function ProductCard({ product }) {
             marginTop: "15px",
           }}
         >
-
           <button
             className="product-btn"
             onClick={handleAddToCart}
@@ -72,16 +98,16 @@ function ProductCard({ product }) {
           </button>
 
           <Link
-            to={`/product/${product.id}`}
+            to={`/product/${
+              product._id || product.id
+            }`}
             className="btn btn-outline-primary"
           >
             View Details
           </Link>
-
         </div>
 
       </div>
-
     </div>
   );
 }

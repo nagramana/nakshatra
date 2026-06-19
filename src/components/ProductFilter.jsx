@@ -57,13 +57,12 @@ function ProductFilter({
     }
 
     onFilter(filteredProducts);
-  }, [
-    search,
-    category,
-    sort,
-    products,
-    onFilter,
-  ]);
+ }, [
+  search,
+  category,
+  sort,
+  products,
+]);
 
   return (
     <div className="card shadow-sm mb-4">

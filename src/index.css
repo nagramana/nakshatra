@@ -109,3 +109,20 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+
+.card {
+  border-radius: 15px;
+}
+
+.badge {
+  font-size: 14px;
+}
+
+.btn-warning {
+  font-weight: 600;
+}
+
+.btn-outline-danger {
+  font-weight: 600;
+}
