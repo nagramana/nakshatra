@@ -1,11 +1,17 @@
-import { useState } from "react";
+import {
+  useState,
+  useEffect,
+} from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useOrders } from "../context/OrderContext";
 
 function MyOrders() {
-  const { orders, requestReturn } =
-    useOrders();
+  const {
+    orders,
+    requestReturn,
+    fetchOrders,
+  } = useOrders();
 
   const [selectedOrder,
     setSelectedOrder] =
@@ -14,6 +20,77 @@ function MyOrders() {
   const [returnReason,
     setReturnReason] =
     useState("");
+
+  // Auto Refresh Orders
+  useEffect(() => {
+    fetchOrders();
+
+    const interval =
+      setInterval(() => {
+        fetchOrders();
+      }, 5000);
+
+    return () =>
+      clearInterval(
+        interval
+      );
+  }, []);
+
+
+  const getProgress = (status) => {
+    switch (status) {
+      case "Order Placed":
+        return 16;
+
+      case "Confirmed":
+        return 33;
+
+      case "Packed":
+        return 50;
+
+      case "Shipped":
+        return 66;
+
+      case "Out For Delivery":
+        return 83;
+
+      case "Delivered":
+        return 100;
+
+      default:
+        return 16;
+    }
+  };
+
+  // Check Return Eligibility
+  const canReturn = (order) => {
+    if (
+      order.orderStatus !==
+      "Delivered"
+    )
+      return false;
+
+    if (!order.deliveredAt)
+      return false;
+
+    const deliveredDate =
+      new Date(
+        order.deliveredAt
+      );
+
+    const today =
+      new Date();
+
+    const diffDays =
+      (today -
+        deliveredDate) /
+      (1000 *
+        60 *
+        60 *
+        24);
+
+    return diffDays <= 7;
+  };
 
   return (
     <>
@@ -63,7 +140,16 @@ function MyOrders() {
 
                     <small className="text-muted">
                       Ordered On :
-                      {order.createdAt}
+                      {new Date(
+                        order.createdAt
+                      ).toLocaleString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
                     </small>
                   </div>
 
@@ -128,9 +214,13 @@ function MyOrders() {
                 </h6>
 
                 {order.items?.map(
-                  (item) => (
+                  (item, index) => (
                     <div
-                      key={item.id}
+                      key={
+                        item._id ||
+                        item.id ||
+                        index
+                      }
                       className="row align-items-center border rounded p-3 mb-3"
                     >
                       <div className="col-md-2 text-center">
@@ -167,7 +257,9 @@ function MyOrders() {
                         <p className="text-muted mb-1">
                           Quantity :
                           {
-                            item.quantity
+                            item.quantity ||
+                            item.qty ||
+                            1
                           }
                         </p>
 
@@ -191,10 +283,12 @@ function MyOrders() {
                           ₹
                           {(
                             item.price *
-                            item.quantity
-                          ).toFixed(
-                            2
-                          )}
+                            (
+                              item.quantity ||
+                              item.qty ||
+                              1
+                            )
+                          ).toFixed(2)}
                         </h5>
 
                       </div>
@@ -209,6 +303,37 @@ function MyOrders() {
                 <h6 className="fw-bold">
                   Order Tracking
                 </h6>
+                {/* {order.returnRequested && (
+  <div
+    className="alert alert-warning mt-3"
+  >
+    Return Requested
+  </div>
+)} */}
+{order.returnRequested &&
+  !order.returnStatus && (
+    <div className="alert alert-warning mt-3">
+      Return Requested
+    </div>
+)}
+
+{order.returnStatus ===
+  "Approved" && (
+  <div
+    className="alert alert-success mt-3"
+  >
+    Return Approved
+  </div>
+)}
+
+{order.returnStatus ===
+  "Rejected" && (
+  <div
+    className="alert alert-danger mt-3"
+  >
+    Return Rejected
+  </div>
+)}
 
                 <div
                   className="progress mt-3 mb-2"
@@ -219,34 +344,80 @@ function MyOrders() {
                 >
                   <div
                     className="progress-bar bg-success"
+
+
                     style={{
-                      width: `${order.progress || 25}%`,
+                      width: `${getProgress(
+                        order.orderStatus
+                      )}%`,
                     }}
                   ></div>
                 </div>
 
                 <div
-                  className="d-flex justify-content-between mb-4"
-                >
-                  <small>
-                    Ordered
-                  </small>
+  className="d-flex justify-content-between mb-4 flex-wrap"
+  style={{
+    fontSize: "12px",
+  }}
+>
 
-                  <small>
-                    Confirmed
-                  </small>
+  <small>Ordered</small>
+  <small>Confirmed</small>
+  <small>Packed</small>
+  <small>Shipped</small>
+  <small>Out For Delivery</small>
+  <small>Delivered</small>
 
-                  <small>
-                    Shipped
-                  </small>
+  {order.returnRequested && (
+    <small
+      style={{
+        color: "#f59e0b",
+        fontWeight: "600",
+      }}
+    >
+      Return Requested
+    </small>
+  )}
 
-                  <small>
-                    Delivered
-                  </small>
-                </div>
+  {order.returnStatus ===
+    "Approved" && (
+    <>
+      <small
+        style={{
+          color: "#22c55e",
+          fontWeight: "600",
+        }}
+      >
+        Return Approved
+      </small>
+
+      <small
+        style={{
+          color: "#ef4444",
+          fontWeight: "600",
+        }}
+      >
+        Order Returned
+      </small>
+    </>
+  )}
+
+  {order.returnStatus ===
+    "Rejected" && (
+    <small
+      style={{
+        color: "#ef4444",
+        fontWeight: "600",
+      }}
+    >
+      Return Rejected
+    </small>
+  )}
+
+</div>
 
                 {/* Timeline */}
-
+                {/* 
                 <div
                   className="bg-light p-3 rounded mb-4"
                 >
@@ -272,110 +443,127 @@ function MyOrders() {
                       )
                     )}
                   </ul>
-                </div>
+                </div> */}
 
                 {/* Footer */}
 
-                <div
-                  className="d-flex justify-content-between align-items-center flex-wrap"
-                >
-                  <div>
-                    <p>
-                      <strong>
-                        Payment:
-                      </strong>{" "}
-                      {
-                        order.paymentMethod
-                      }
-                    </p>
+<div
+  className="d-flex justify-content-between align-items-center flex-wrap"
+>
+  <div>
+    <p>
+      <strong>
+        Payment:
+      </strong>{" "}
+      {
+        order.paymentMethod
+      }
+    </p>
 
-                    <h3
-                      style={{
-                        color:
-                          "#22c55e",
-                      }}
-                    >
-                      ₹
-                      {
-                        order.total
-                      }
-                    </h3>
-                  </div>
+    <h3
+      style={{
+        color:
+          "#22c55e",
+      }}
+    >
+      ₹
+      {
+        order.total
+      }
+    </h3>
+  </div>
 
-                  <div
-                    className="d-flex gap-2"
-                  >
-
-                    {/* <button
-                      className="btn btn-outline-primary"
-                    >
-                      Track Order
-                    </button> */}
-
-                    {/* {order.returnRequested ? (
-                      <button
-                        className="btn btn-secondary"
-                        disabled
-                      >
-                        Return:
-                        {" "}
-                        {
-                          order.returnStatus
-                        }
-                      </button>
-                    ) : (
-                      <button
-                        className="btn btn-warning"
-                        onClick={() =>
-                          requestReturn(
-                            order.id
-                          )
-                        }
-                      >
-                        Request Return
-                      </button>
-                    )} */}
-
-
-                    {order.returnRequested ? (
-  <button
-    className={
-      order.returnStatus ===
-      "Approved"
-        ? "btn btn-success"
-        : order.returnStatus ===
-          "Rejected"
-        ? "btn btn-danger"
-        : "btn btn-secondary"
-    }
-    disabled
+  <div
+    className="d-flex gap-2"
   >
-    Return :
-    {order.returnStatus}
-  </button>
-): (
-                      <button
-                        className="btn btn-warning"
-                        onClick={() =>
-                          setSelectedOrder(order.id)
-                        }
-                      >
-                        Request Return
-                      </button>
-                    )}
 
-                  </div>
-                </div>
+    {order.orderStatus ===
+      "Delivered" && (
+      <div>
+        {order.returnRequested ? (
+          <>
+            <button
+              className={
+                order.returnStatus ===
+                "Approved"
+                  ? "btn btn-success"
+                  : order.returnStatus ===
+                    "Rejected"
+                  ? "btn btn-danger"
+                  : "btn btn-secondary"
+              }
+              disabled
+            >
+              Return :
+{" "}
+{order.returnStatus || "Pending"}
+            </button>
 
+            {order.returnRequestedAt && (
+              <div
+                style={{
+                  marginTop:
+                    "8px",
+                  fontSize:
+                    "13px",
+                  color:
+                    "#666",
+                }}
+              >
+                Requested On :
+                {new Date(
+                  order.returnRequestedAt
+                ).toLocaleString()}
               </div>
-            </div>
-          ))
-        )}
+            )}
 
+            {order.returnActionAt && (
+              <div
+                style={{
+                  marginTop:
+                    "5px",
+                  fontSize:
+                    "13px",
+                  color:
+                    "#666",
+                }}
+              >
+                Updated On :
+                {new Date(
+                  order.returnActionAt
+                ).toLocaleString()}
+              </div>
+            )}
+          </>
+        ) : canReturn(
+          order
+        ) ? (
+          <button
+            className="btn btn-warning"
+            onClick={() =>
+              setSelectedOrder(
+                order._id
+              )
+            }
+          >
+            Request Return
+          </button>
+        ) : null}
       </div>
-      {selectedOrder && (
-        <div
-          className="modal d-block"
+    )}
+
+  </div>
+</div>
+        </div>
+    </div>
+  ))
+)}
+
+
+</div>
+{selectedOrder && (
+  <div
+    className="modal d-block"
           style={{
             background:
               "rgba(0,0,0,0.5)",
@@ -459,10 +647,13 @@ function MyOrders() {
           </div>
         </div>
       )}
+
       <Footer />
     </>
   );
 }
 
-
 export default MyOrders;
+
+
+    

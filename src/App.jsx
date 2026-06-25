@@ -4,73 +4,161 @@ import {
   Route,
 } from "react-router-dom";
 
+import {
+  useEffect
+} from "react";
+
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import Payment from "./pages/Payment";
+import OrderSuccess from "./pages/OrderSuccess";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MyOrders from "./pages/MyOrders";
 import TrackOrder from "./pages/TrackOrder";
 import Profile from "./pages/Profile";
 
+import Loader from "./pages/Loader";
+
+import {
+  useLoading
+} from "./context/LoadingContext";
+
 function App() {
+
+  const {
+    loading
+  } = useLoading();
+
+  useEffect(() => {
+
+    if (
+      "scrollRestoration" in
+      window.history
+    ) {
+
+      window.history
+        .scrollRestoration =
+        "manual";
+
+    }
+
+    window.scrollTo(
+      0,
+      0
+    );
+
+  }, []);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={<Home />}
-        />
+    <>
 
-        <Route
-          path="/products"
-          element={<Products />}
-        />
+      {loading && (
+        <Loader />
+      )}
 
-        <Route
-          path="/product/:id"
-          element={<ProductDetails />}
-        />
+      <BrowserRouter>
 
-        <Route
-          path="/cart"
-          element={<Cart />}
-        />
+        <Routes>
 
-        <Route
-          path="/checkout"
-          element={<Checkout />}
-        />
+          {/* Home */}
 
-        <Route
-          path="/my-orders"
-          element={<MyOrders />}
-        />
+          <Route
+            path="/"
+            element={<Home />}
+          />
 
-        <Route
-          path="/track-order"
-          element={<TrackOrder />}
-        />
+          {/* Products */}
 
-        <Route
-          path="/profile"
-          element={<Profile />}
-        />
+          <Route
+            path="/products"
+            element={<Products />}
+          />
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+          <Route
+            path="/product/:id"
+            element={
+              <ProductDetails />
+            }
+          />
 
-        <Route
-          path="/register"
-          element={<Register />}
-        />
-      </Routes>
-    </BrowserRouter>
+          {/* Cart */}
+
+          <Route
+            path="/cart"
+            element={<Cart />}
+          />
+
+          {/* Checkout */}
+
+          <Route
+            path="/checkout"
+            element={
+              <Checkout />
+            }
+          />
+
+          {/* Payment */}
+
+          <Route
+            path="/payment"
+            element={<Payment />}
+          />
+
+          {/* Order Success */}
+
+          <Route
+            path="/order-success"
+            element={
+              <OrderSuccess />
+            }
+          />
+
+          {/* Orders */}
+
+          <Route
+            path="/my-orders"
+            element={
+              <MyOrders />
+            }
+          />
+
+          <Route
+            path="/track-order"
+            element={
+              <TrackOrder />
+            }
+          />
+
+          {/* Profile */}
+
+          <Route
+            path="/profile"
+            element={<Profile />}
+          />
+
+          {/* Auth */}
+
+          <Route
+            path="/login"
+            element={<Login />}
+          />
+
+          <Route
+            path="/register"
+            element={<Register />}
+          />
+
+        </Routes>
+
+      </BrowserRouter>
+
+    </>
   );
+
 }
 
 export default App;

@@ -1,9 +1,14 @@
+
+import axios from "axios";
 import {
   createContext,
   useContext,
   useState,
   useEffect,
 } from "react";
+
+
+
 
 const OrderContext = createContext();
 
@@ -12,21 +17,25 @@ export const useOrders = () => {
 };
 
 export const OrderProvider = ({ children }) => {
-  const [orders, setOrders] = useState(() => {
-    const savedOrders =
-      localStorage.getItem("orders");
+  const [orders, setOrders] =
+  useState([]);
 
-    return savedOrders
-      ? JSON.parse(savedOrders)
-      : [];
-  });
+  const fetchOrders = async () => {
+  try {
+    const response =
+      await axios.get(
+        "http://localhost:5000/api/orders"
+      );
 
-  useEffect(() => {
-    localStorage.setItem(
-      "orders",
-      JSON.stringify(orders)
-    );
-  }, [orders]);
+    setOrders(response.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+useEffect(() => {
+  fetchOrders();
+}, []);
 
 
   useEffect(() => {
@@ -126,29 +135,31 @@ export const OrderProvider = ({ children }) => {
 // }, []);
 
 // Place Order
-const placeOrder = (orderData) => {
-  const newOrder = {
-    ...orderData,
+const placeOrder = async (
+  orderData
+) => {
 
-    items:
-      orderData.items ||
-      orderData.cartItems ||
-      [],
+  const newOrder = {
+    id: orderData.id,
 
     customer:
       orderData.customer || {},
 
+    items:
+      orderData.items || [],
+
     total:
       orderData.total || 0,
+
+    paymentMethod:
+      orderData.paymentMethod ||
+      "Cash On Delivery",
 
     orderStatus:
       "Order Placed",
 
-    paymentMethod:
-      "Cash On Delivery",
-
     createdAt:
-      new Date().toLocaleString(),
+      new Date(),
 
     progress: 25,
 
@@ -168,10 +179,28 @@ const placeOrder = (orderData) => {
     ],
   };
 
-  setOrders((prevOrders) => [
-    newOrder,
-    ...prevOrders,
-  ]);
+  console.log(
+    "Sending Order",
+    newOrder
+  );
+
+  try {
+
+    const response =
+  await axios.post(
+    "http://localhost:5000/api/orders",
+    newOrder
+  );
+
+await fetchOrders();
+
+return response.data.order;
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
 };
 
   // Update Status
@@ -192,25 +221,39 @@ const placeOrder = (orderData) => {
   };
 
   // Return Request
-  const requestReturn = (
-    orderId,
-    reason
-  ) => {
+  const requestReturn = async (
+  orderId,
+  reason
+) => {
+  
+  try {
+    await axios.put(
+      `http://localhost:5000/api/orders/return/${orderId}`,
+      {
+        reason,
+      }
+    );
+
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
-        order.id === orderId
+        order._id === orderId
           ? {
-            ...order,
-            returnRequested: true,
-            returnStatus:
-              "Pending",
-            returnReason:
-              reason,
-          }
+              ...order,
+              returnRequested: true,
+              returnStatus: "Pending",
+              returnReason: reason,
+            }
           : order
       )
     );
-  };
+
+    alert(
+      "Return Request Submitted"
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   // Approve Return
   const approveReturn = (
@@ -262,25 +305,23 @@ const placeOrder = (orderData) => {
 
   // Clear All Orders
   const clearOrders = () => {
-    setOrders([]);
-    localStorage.removeItem(
-      "orders"
-    );
-  };
+  setOrders([]);
+};
 
   return (
     <OrderContext.Provider
-      value={{
-        orders,
-        placeOrder,
-        updateOrderStatus,
-        requestReturn,
-        approveReturn,
-        rejectReturn,
-        deleteOrder,
-        clearOrders,
-      }}
-    >
+  value={{
+    orders,
+    fetchOrders,
+    placeOrder,
+    updateOrderStatus,
+    requestReturn,
+    approveReturn,
+    rejectReturn,
+    deleteOrder,
+    clearOrders,
+  }}
+>
       {children}
     </OrderContext.Provider>
   );

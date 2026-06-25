@@ -12,36 +12,43 @@ function Cart() {
     totalPrice,
   } = useCart();
 
+  const grandTotal = totalPrice;
+
   return (
     <>
       <Navbar />
 
-      <div className="container py-5">
-
-        <h2
+      <div
+        className="container py-4"
+        style={{
+          background: "#ffffff",
+          minHeight: "100vh",
+        }}
+      >
+        <h3
           className="fw-bold mb-4"
           style={{
-            color: "#082A78",
+            color: "#353543",
           }}
         >
-          Shopping Cart ({cartItems.length})
-        </h2>
+          Cart ({cartItems.length})
+        </h3>
 
         {cartItems.length === 0 ? (
-          <div
-            className="text-center py-5"
-            style={{
-              background: "#fff",
-              borderRadius: "15px",
-              boxShadow:
-                "0 5px 20px rgba(0,0,0,0.08)",
-            }}
-          >
-            <h3>Your Cart Is Empty</h3>
+          <div className="card border-0 shadow-sm text-center p-5">
+            <h4>Your Cart Is Empty</h4>
+
+            <p className="text-muted">
+              Looks like you haven't added any products yet.
+            </p>
 
             <Link
               to="/products"
-              className="btn btn-primary mt-3"
+              className="btn mt-3"
+              style={{
+                background: "#9f2089",
+                color: "#fff",
+              }}
             >
               Continue Shopping
             </Link>
@@ -49,112 +56,120 @@ function Cart() {
         ) : (
           <div className="row">
 
-            {/* Products Section */}
+            {/* Cart Items */}
 
             <div className="col-lg-8">
 
               {cartItems.map((item) => (
                 <div
                   key={item.id}
-                  className="card mb-3 border-0 shadow-sm"
+                  className="card border-0 shadow-sm mb-3"
+                  style={{
+                    borderRadius: "12px",
+                  }}
                 >
                   <div className="card-body">
 
                     <div className="row align-items-center">
 
-                      {/* Product Image */}
+                      {/* Image */}
 
-                      <div className="col-md-3 text-center">
+                      <div className="col-md-2 col-4 text-center">
+
                         <img
                           src={item.image}
                           alt={item.name}
+                          className="img-fluid rounded"
                           style={{
-                            width: "180px",
-                            height: "180px",
-                            objectFit: "contain",
+                            maxHeight: "140px",
+                            objectFit: "cover",
                           }}
                         />
+
                       </div>
 
-                      {/* Product Info */}
+                      {/* Product Details */}
 
-                      <div className="col-md-5">
+                      <div className="col-md-7 col-8">
 
-                        <h4>{item.name}</h4>
-
-                        <h5>
-                          ₹{item.price}
+                        <h5 className="fw-bold">
+                          {item.name}
                         </h5>
 
-                        <p
+                        <h4
+                          className="fw-bold"
                           style={{
-                            color: "#16a34a",
-                            fontWeight: "600",
+                            color: "#353543",
                           }}
                         >
-                          In Stock
+                          ₹{item.price}
+                        </h4>
+
+                        <p className="text-success fw-semibold mb-1">
+                          Free Delivery
                         </p>
 
-                      </div>
+                        <small className="text-muted">
+                          7 Days Easy Return
+                        </small>
 
-                      {/* Quantity */}
-
-                      <div className="col-md-2">
-
-                        <div className="d-flex align-items-center">
+                        <div className="d-flex align-items-center gap-2 mt-3">
 
                           <button
-                            className="btn btn-outline-danger"
+                            className="btn btn-outline-secondary btn-sm"
                             onClick={() =>
-                              decreaseQuantity(
-                                item.id
-                              )
+                              decreaseQuantity(item.id)
                             }
                           >
                             -
                           </button>
 
-                          <span className="mx-3 fw-bold">
+                          <span className="fw-bold">
                             {item.quantity}
                           </span>
 
                           <button
-                            className="btn btn-outline-success"
+                            className="btn btn-sm"
+                            style={{
+                              background: "#9f2089",
+                              color: "#fff",
+                            }}
                             onClick={() =>
-                              increaseQuantity(
-                                item.id
-                              )
+                              increaseQuantity(item.id)
                             }
                           >
                             +
+                          </button>
+
+                          <button
+                            className="btn btn-outline-danger btn-sm ms-2"
+                            onClick={() =>
+                              removeFromCart(item.id)
+                            }
+                          >
+                            Remove
                           </button>
 
                         </div>
 
                       </div>
 
-                      {/* Total Price */}
+                      {/* Price */}
 
-                      <div className="col-md-2 text-end">
+                      <div className="col-md-3 text-md-end mt-3 mt-md-0">
 
-                        <h5>
+                        <h4
+                          className="fw-bold"
+                          style={{
+                            color: "#353543",
+                          }}
+                        >
                           ₹
                           {(
                             item.price *
                             item.quantity
                           ).toFixed(2)}
-                        </h5>
-
-                        <button
-                          className="btn btn-danger btn-sm mt-2"
-                          onClick={() =>
-                            removeFromCart(
-                              item.id
-                            )
-                          }
-                        >
-                          Remove
-                        </button>
+                        </h4>
 
                       </div>
 
@@ -166,55 +181,51 @@ function Cart() {
 
             </div>
 
-            {/* Order Summary */}
+            {/* Price Details */}
 
             <div className="col-lg-4">
 
-              <div className="card shadow border-0">
-
+              <div
+                className="card border-0 shadow-sm"
+                style={{
+                  borderRadius: "12px",
+                  position: "sticky",
+                  top: "90px",
+                }}
+              >
                 <div className="card-body">
 
-                  <h4
+                  <h5
+                    className="fw-bold mb-3"
                     style={{
-                      color: "#082A78",
-                      fontWeight: "700",
+                      color: "#353543",
                     }}
                   >
-                    Order Summary
-                  </h4>
+                    Price Details
+                  </h5>
 
                   <hr />
 
                   <div className="d-flex justify-content-between mb-2">
-                    <span>
-                      Total Products
-                    </span>
-
+                    <span>Total Products</span>
                     <strong>
                       {cartItems.length}
                     </strong>
                   </div>
 
                   <div className="d-flex justify-content-between mb-2">
-                    <span>
-                      Delivery Charge
-                    </span>
+                    <span>Product Total</span>
 
                     <strong>
-                      Free
+                      ₹{totalPrice.toFixed(2)}
                     </strong>
                   </div>
 
-                  <div className="d-flex justify-content-between mb-3">
-                    <span>
-                      Product Total
-                    </span>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Delivery Charges</span>
 
-                    <strong>
-                      ₹
-                      {totalPrice.toFixed(
-                        2
-                      )}
+                    <strong className="text-success">
+                      FREE
                     </strong>
                   </div>
 
@@ -222,46 +233,55 @@ function Cart() {
 
                   <div className="d-flex justify-content-between">
 
-                    <h4>
-                      Grand Total
-                    </h4>
+                    <h5 className="fw-bold">
+                      Order Total
+                    </h5>
 
-                    <h4
+                    <h5
+                      className="fw-bold"
                       style={{
-                        color: "#082A78",
+                        color: "#9f2089",
                       }}
                     >
-                      ₹
-                      {totalPrice.toFixed(
-                        2
-                      )}
-                    </h4>
+                      ₹{grandTotal.toFixed(2)}
+                    </h5>
 
+                  </div>
+
+                  <div className="alert alert-light border mt-3">
+                    🚚 Free Delivery
+                    <br />
+                    🔒 Secure Payments
+                    <br />
+                    ↩️ Easy Returns
                   </div>
 
                   <Link
                     to="/checkout"
-                    className="btn btn-success w-100 mt-3"
+                    className="btn w-100 mt-3"
+                    style={{
+                      background: "#9f2089",
+                      color: "#fff",
+                      fontWeight: "700",
+                    }}
                   >
-                    Proceed To Checkout
+                    Continue
                   </Link>
 
                   <Link
                     to="/products"
-                    className="btn btn-outline-primary w-100 mt-2"
+                    className="btn btn-outline-secondary w-100 mt-2"
                   >
-                    Continue Shopping
+                    Add More Products
                   </Link>
 
                 </div>
-
               </div>
 
             </div>
 
           </div>
         )}
-
       </div>
 
       <Footer />

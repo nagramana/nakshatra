@@ -3,10 +3,20 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useCart } from "../context/CartContext";
 import { useOrders } from "../context/OrderContext";
-import { useNavigate } from "react-router-dom";
+import {
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import "../styles/checkout.css";
+import { FaTruck } from "react-icons/fa";
+import { FaStore } from "react-icons/fa";
+
 
 function Checkout() {
   const navigate = useNavigate();
+
+  const location =
+    useLocation();
 
   const {
     cartItems,
@@ -26,6 +36,19 @@ function Checkout() {
       state: "",
       pincode: "",
     });
+
+  const [paymentMethod,
+    setPaymentMethod] =
+    useState("Cash On Delivery");
+
+
+
+  const [urlError,
+    setUrlError] =
+    useState("");
+  const [transactionId,
+    setTransactionId] =
+    useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -53,14 +76,89 @@ function Checkout() {
       return;
     }
 
+
+    //     if (
+    //   paymentMethod === "UPI"
+    // ) {
+
+    //   if (
+    //     !transactionId.trim()
+    //   ) {
+    //     setUrlError(
+    //       "Please enter payment proof URL"
+    //     );
+
+    //     return;
+    //   }
+
+    //   const urlPattern =
+    //     /^https?:\/\/.+/;
+
+    //   if (
+    //     !urlPattern.test(
+    //       transactionId
+    //     )
+    //   ) {
+    //     setUrlError(
+    //       "Please enter correct URL"
+    //     );
+
+    //     return;
+    //   }
+
+    //   setUrlError("");
+    // }
+
+    if (
+      paymentMethod === "UPI"
+    ) {
+
+      if (
+        !transactionId.trim()
+      ) {
+
+        setUrlError(
+          "Please enter UTR / Transaction ID"
+        );
+
+        return;
+      }
+
+      if (
+        transactionId.length < 8
+      ) {
+
+        setUrlError(
+          "UTR / Transaction ID must be at least 8 characters"
+        );
+
+        return;
+      }
+
+      setUrlError("");
+    }
     const orderData = {
-      id: "ORD" + Date.now(),
-      date: new Date().toLocaleString(),
-      status: "Pending",
-      customer: formData,
-      items: cartItems,
-      total: grandTotal,
-    };
+  id: "ORD" + Date.now(),
+
+  customer: {
+    name: formData.name,
+    phone: formData.phone,
+    address: formData.address,
+    city: formData.city,
+    state: formData.state,
+    pincode: formData.pincode,
+  },
+
+  items: cartItems,
+
+  total: totalPrice,
+
+  paymentMethod: paymentMethod,
+
+  orderStatus: "Order Placed",
+
+  createdAt: new Date(),
+};
 
     placeOrder(orderData);
 
@@ -70,7 +168,14 @@ function Checkout() {
       `Order Placed Successfully!\nOrder ID: ${orderData.id}`
     );
 
-    navigate("/my-orders");
+    navigate(
+      "/my-orders",
+      {
+        state: {
+          success: true
+        }
+      }
+    );
   };
 
   return (
@@ -80,98 +185,260 @@ function Checkout() {
       <div
         className="container py-5"
       >
-        <h2
+        {/* <h2
           className="mb-4 fw-bold"
           style={{
             color: "#082A78",
           }}
         >
           Checkout
-        </h2>
+        </h2> */}
 
-        <div className="row">
 
-          {/* Delivery Address */}
 
-          <div className="col-lg-8">
+        <div className="card border-0 shadow-sm mb-4">
+          <div className="card-body">
+
+            <div className="d-flex justify-content-between align-items-center">
+
+              <div className="text-center">
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    background: "#9f2089",
+                    color: "#fff",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "auto",
+                    fontWeight: "700"
+                  }}
+                >
+                  1
+                </div>
+
+                <small>Address</small>
+              </div>
+
+              <div
+                style={{
+                  flex: 1,
+                  height: "3px",
+                  background: "#9f2089",
+                  margin: "0 10px"
+                }}
+              />
+
+              <div className="text-center">
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    background: "#9f2089",
+                    color: "#fff",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "auto",
+                    fontWeight: "700"
+                  }}
+                >
+                  2
+                </div>
+
+                <small>Review</small>
+              </div>
+
+              <div
+                style={{
+                  flex: 1,
+                  height: "3px",
+                  background: "#e5e7eb",
+                  margin: "0 10px"
+                }}
+              />
+
+              <div className="text-center">
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    background: "#e5e7eb",
+                    color: "#000",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "auto",
+                    fontWeight: "700"
+                  }}
+                >
+                  3
+                </div>
+
+                <small>Payment</small>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <div className="row g-4">
+
+          {/* LEFT SIDE */}
+
+          <div className="col-12 col-lg-8 checkout-left">
+
+            {/* Delivery Address */}
 
             <div className="card shadow-sm border-0">
 
               <div className="card-body">
 
-                <h3 className="mb-4">
+                <h4
+                  className="fw-bold mb-4"
+                  style={{ color: "#353543" }}
+                >
                   Delivery Address
-                </h3>
+                </h4>
 
                 <input
                   type="text"
-                  className="form-control mb-3"
+                  className="form-control py-3 mb-3"
                   placeholder="Full Name"
                   name="name"
                   value={formData.name}
-                  onChange={
-                    handleChange
-                  }
+                  onChange={handleChange}
                 />
 
                 <input
                   type="text"
-                  className="form-control mb-3"
+                  className="form-control py-3 mb-3"
                   placeholder="Phone Number"
                   name="phone"
                   value={formData.phone}
-                  onChange={
-                    handleChange
-                  }
+                  onChange={handleChange}
                 />
 
                 <textarea
-                  className="form-control mb-3"
+                  className="form-control py-3 mb-3"
                   rows="4"
                   placeholder="Full Address"
                   name="address"
-                  value={
-                    formData.address
-                  }
-                  onChange={
-                    handleChange
-                  }
+                  value={formData.address}
+                  onChange={handleChange}
                 />
 
                 <input
                   type="text"
-                  className="form-control mb-3"
+                  className="form-control py-3 mb-3"
                   placeholder="City"
                   name="city"
                   value={formData.city}
-                  onChange={
-                    handleChange
-                  }
+                  onChange={handleChange}
                 />
 
                 <input
                   type="text"
-                  className="form-control mb-3"
+                  className="form-control py-3 mb-3"
                   placeholder="State"
                   name="state"
                   value={formData.state}
-                  onChange={
-                    handleChange
-                  }
+                  onChange={handleChange}
                 />
 
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control py-3"
                   placeholder="Pincode"
                   name="pincode"
-                  value={
-                    formData.pincode
-                  }
-                  onChange={
-                    handleChange
-                  }
+                  value={formData.pincode}
+                  onChange={handleChange}
                 />
+
+              </div>
+
+            </div>
+
+            {/* PRODUCT DETAILS */}
+
+            <div className="card shadow-sm border-0 mt-4">
+
+              <div className="card-body">
+
+                <h4
+                  className="fw-bold mb-4"
+                  style={{ color: "#353543" }}
+                >
+                  Product Details
+                </h4>
+
+                {cartItems.map((item) => (
+
+                  <div
+                    key={item.id}
+                    className="meesho-product-card"
+                  >
+
+                    <div className="delivery-header">
+
+                      <FaTruck
+                        style={{
+                          marginRight: "8px",
+                          color: "#666"
+                        }}
+                      />
+
+                      Estimated Delivery in 3-5 Days
+
+                    </div>
+
+                    <div className="product-row">
+
+                     <img
+  src={item.image}
+  className="checkout-product-image"
+/>
+                      <div className="product-info">
+
+                        <h5>{item.name}</h5>
+
+                        <p className="qty">
+                          Qty : {item.quantity}
+                        </p>
+
+                        <h4 className="price">
+                          ₹{item.price}
+                        </h4>
+
+                        <p className="free-delivery">
+                          Free Delivery
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                    <div className="seller-row">
+
+                      <FaStore
+                        style={{
+                          marginRight: "8px",
+                          color: "#666"
+                        }}
+                      />
+
+                      Sold By : Nakshatra Mart
+
+                    </div>
+
+                  </div>
+
+                ))}
 
               </div>
 
@@ -179,117 +446,177 @@ function Checkout() {
 
           </div>
 
-          {/* Order Summary */}
+          {/* RIGHT SIDE */}
 
-          <div className="col-lg-4">
+          <div className="col-12 col-lg-4 checkout-right">
 
-            <div className="card shadow border-0">
+            <div
+              className="card shadow border-0"
+              style={{
+                position: "sticky",
+                top: "90px",
+              }}
+            >
 
               <div className="card-body">
 
-                <h3
-                  style={{
-                    fontWeight:
-                      "700",
-                  }}
+                <h4
+                  className="fw-bold"
+                  style={{ color: "#353543" }}
                 >
-                  Order Summary
-                </h3>
+                  Price Details
+                </h4>
 
                 <hr />
 
                 <div className="d-flex justify-content-between mb-2">
-                  <span>
-                    Products
-                  </span>
+                  <span>Products</span>
+                  <strong>{cartItems.length}</strong>
+                </div>
 
-                  <strong>
-                    {
-                      cartItems.length
-                    }
+                <div className="d-flex justify-content-between mb-2">
+                  <span>Discount</span>
+                  <strong style={{ color: "#16a34a" }}>
+                    ₹0
                   </strong>
                 </div>
 
                 <div className="d-flex justify-content-between mb-2">
-                  <span>
-                    Delivery
-                  </span>
-
-                  <strong
-                    style={{
-                      color:
-                        "green",
-                    }}
-                  >
+                  <span>Delivery</span>
+                  <strong style={{ color: "green" }}>
                     FREE
                   </strong>
                 </div>
 
                 <div className="d-flex justify-content-between mb-2">
-                  <span>
-                    Product Total
-                  </span>
-
+                  <span>Product Total</span>
                   <strong>
-                    ₹
-                    {totalPrice.toFixed(
-                      2
-                    )}
+                    ₹{totalPrice.toFixed(2)}
                   </strong>
                 </div>
 
                 <hr />
 
-                <div className="d-flex justify-content-between">
+                <div className="d-flex justify-content-between align-items-center">
 
-                  <h4>
-                    Order Total
-                  </h4>
+                  <h4>Order Total</h4>
 
                   <h4
                     style={{
-                      color:
-                        "#B12704",
-                      fontWeight:
-                        "700",
+                      color: "#9f2089",
+                      fontWeight: "700",
                     }}
                   >
-                    ₹
-                    {grandTotal.toFixed(
-                      2
-                    )}
+                    ₹{grandTotal.toFixed(2)}
                   </h4>
 
+                </div>
+
+                <div className="alert alert-success mt-3">
+                  You Saved ₹0 on this order
                 </div>
 
                 <hr />
 
-                <h6 className="mb-3">
+                <h5
+                  className="fw-bold mb-3"
+                  style={{ color: "#353543" }}
+                >
                   Payment Method
-                </h6>
+                </h5>
 
-                <div className="alert alert-success">
-                  Cash On Delivery
-                  (COD)
+                {/* COD */}
+
+                <div className="border rounded p-3 mb-3">
+
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="paymentMethod"
+                    checked={
+                      paymentMethod ===
+                      "Cash On Delivery"
+                    }
+                    onChange={() =>
+                      setPaymentMethod(
+                        "Cash On Delivery"
+                      )
+                    }
+                  />
+
+                  <label className="form-check-label ms-2">
+                    Cash On Delivery (COD)
+                  </label>
+
                 </div>
+
+                {/* UPI */}
+
+                <div className="border rounded p-3 mb-3">
+
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="paymentMethod"
+                    checked={
+                      paymentMethod === "UPI"
+                    }
+                    onChange={() =>
+                      setPaymentMethod("UPI")
+                    }
+                  />
+
+                  <label className="form-check-label ms-2">
+                    UPI Payment
+                  </label>
+
+                </div>
+
+                {paymentMethod === "UPI" && (
+
+                  <div className="border rounded p-3 mb-3">
+
+                    <h6 className="fw-bold">
+                      Scan QR Code
+                    </h6>
+
+                    <img
+                      src="https://res.cloudinary.com/dzosvvlib/image/upload/v1781962618/WhatsApp_Image_2026-06-20_at_7.05.23_PM_seyhbz.jpg"
+                      alt="QR"
+                      style={{
+                        width: "220px",
+                        display: "block",
+                        margin: "auto",
+                      }}
+                    />
+
+                    <input
+                      type="text"
+                      className="form-control mt-3"
+                      placeholder="Enter UTR Number"
+                      value={transactionId}
+                      onChange={(e) =>
+                        setTransactionId(
+                          e.target.value
+                        )
+                      }
+                    />
+
+                  </div>
+
+                )}
 
                 <button
                   className="btn w-100"
-                  style={{
-                    background:
-                      "#FFD814",
-                    color:
-                      "#111",
-                    fontWeight:
-                      "700",
-                    border:
-                      "1px solid #FCD200",
-                  }}
-                  onClick={
-                    handleOrder
+                  onClick={() =>
+                    navigate("/payment", {
+                      state: {
+                        customer: formData,
+                      },
+                    })
                   }
                 >
-                  Place Your Order
+                  Proceed To Payment
                 </button>
 
               </div>
@@ -297,6 +624,8 @@ function Checkout() {
             </div>
 
           </div>
+
+
 
         </div>
       </div>

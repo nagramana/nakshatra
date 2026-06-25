@@ -1,0 +1,252 @@
+/* ===================================
+   HERO SECTION
+=================================== */
+
+.hero-section{
+  width:100vw;
+  margin-left:calc(50% - 50vw);
+  position:relative;
+  overflow:hidden;
+  padding:0;
+}
+
+/* ===================================
+   HERO SLIDE
+=================================== */
+
+.hero-slide{
+  width:100vw;
+  height:650px;
+
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+
+  position:relative;
+}
+
+/* ===================================
+   OVERLAY
+=================================== */
+
+.hero-overlay{
+  width:100%;
+  height:100%;
+
+  background:
+  linear-gradient(
+    90deg,
+    rgba(0,0,0,.65) 0%,
+    rgba(0,0,0,.35) 40%,
+    rgba(0,0,0,.05) 100%
+  );
+
+  display:flex;
+  align-items:center;
+}
+
+/* ===================================
+   CONTENT
+=================================== */
+
+.hero-content{
+  max-width:700px;
+  padding-left:120px;
+  color:#fff;
+}
+
+.hero-content h1{
+  font-size:80px;
+  font-weight:900;
+  line-height:1;
+  margin-bottom:20px;
+  text-transform:uppercase;
+}
+
+.hero-content h2{
+  font-size:30px;
+  font-weight:500;
+  line-height:1.6;
+  margin-bottom:35px;
+  color:#f3f4f6;
+}
+
+/* ===================================
+   BUTTON
+=================================== */
+
+.hero-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:18px 45px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #7c3aed,
+    #9333ea
+  );
+
+  color:#fff;
+  text-decoration:none;
+
+  font-size:18px;
+  font-weight:700;
+
+  border-radius:14px;
+
+  transition:.3s;
+}
+
+.hero-btn:hover{
+  transform:translateY(-3px);
+  color:#fff;
+}
+
+/* ===================================
+   DOTS
+=================================== */
+
+.slider-dots{
+  position:absolute;
+  bottom:25px;
+  left:50%;
+  transform:translateX(-50%);
+
+  display:flex;
+  gap:10px;
+
+  z-index:10;
+}
+
+.dot{
+  width:12px;
+  height:12px;
+
+  border-radius:50%;
+
+  background:rgba(255,255,255,.5);
+
+  cursor:pointer;
+  transition:.3s;
+}
+
+.dot.active{
+  width:36px;
+  border-radius:20px;
+  background:#7c3aed;
+}
+
+/* ===================================
+   REMOVE ARROWS
+=================================== */
+
+.slider-arrow,
+.hero-arrow,
+.prev-btn,
+.next-btn,
+.arrow-left,
+.arrow-right{
+  display:none !important;
+}
+
+/* ===================================
+   TABLET
+=================================== */
+
+@media(max-width:1024px){
+
+  .hero-slide{
+    height:500px;
+  }
+
+  .hero-content{
+    padding-left:60px;
+  }
+
+  .hero-content h1{
+    font-size:56px;
+  }
+
+  .hero-content h2{
+    font-size:22px;
+  }
+
+}
+
+/* ===================================
+   MOBILE
+=================================== */
+
+@media(max-width:768px){
+
+  .hero-slide{
+    height:280px;
+  }
+
+  .hero-overlay{
+    background:
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,.7),
+      rgba(0,0,0,.25)
+    );
+  }
+
+  .hero-content{
+    padding:20px;
+    max-width:100%;
+  }
+
+  .hero-content h1{
+    font-size:34px;
+    margin-bottom:10px;
+  }
+
+  .hero-content h2{
+    font-size:15px;
+    line-height:1.5;
+    margin-bottom:18px;
+  }
+
+  .hero-btn{
+    padding:12px 24px;
+    font-size:14px;
+  }
+
+  .slider-dots{
+    bottom:12px;
+  }
+
+  .dot{
+    width:10px;
+    height:10px;
+  }
+
+  .dot.active{
+    width:28px;
+  }
+
+}
+
+/* ===================================
+   SMALL MOBILE
+=================================== */
+
+@media(max-width:480px){
+
+  .hero-slide{
+    height:240px;
+  }
+
+  .hero-content h1{
+    font-size:28px;
+  }
+
+  .hero-content h2{
+    font-size:13px;
+  }
+
+}

@@ -1,0 +1,295 @@
+/* ===== GLOBAL RESPONSIVE FIX ===== */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.container,
+.page-container,
+.home-container,
+.products-container,
+.cart-container,
+.profile-container,
+.orders-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+
+  /* Navbar */
+
+  .navbar {
+    padding: 10px;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-size: 28px !important;
+  }
+
+  .nav-links {
+    gap: 10px !important;
+  }
+
+  .nav-links a {
+    font-size: 13px !important;
+  }
+
+  /* Product Grid */
+
+  .products-grid,
+  .featured-grid,
+  .flash-grid,
+  .product-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Product Card */
+
+  .product-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden;
+  }
+
+  .product-image img,
+  .product-card img {
+    width: 100%;
+    height: 140px !important;
+    object-fit: cover;
+  }
+
+  .product-name {
+    font-size: 13px !important;
+  }
+
+  .product-price {
+    font-size: 15px !important;
+  }
+
+  /* Buttons */
+
+  .product-actions {
+    display: flex;
+    gap: 5px;
+  }
+
+  .product-actions button,
+  .add-cart-btn,
+  .buy-btn {
+    flex: 1;
+    padding: 8px;
+    font-size: 11px;
+  }
+
+  /* Categories */
+
+  .category-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .category-item {
+    min-width: 70px;
+  }
+
+  /* Hero Slider */
+
+  .hero-slider,
+  .banner-slider {
+    height: auto;
+  }
+
+  .hero-slider img,
+  .banner-slider img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Cart */
+
+  .cart-item {
+    flex-direction: column;
+  }
+
+  .cart-item img {
+    width: 100px;
+  }
+
+  /* Checkout */
+
+  .checkout-container {
+    padding: 10px;
+  }
+
+  /* Profile */
+
+  .profile-card {
+    width: 100%;
+  }
+
+  /* Orders */
+
+  .orders-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 600px;
+  }
+
+  /* Forms */
+
+  input,
+  select,
+  textarea,
+  button {
+    width: 100%;
+  }
+
+  /* Footer */
+
+  .footer {
+    text-align: center;
+  }
+}
+
+/* =========================
+   GLOBAL MOBILE
+========================= */
+
+@media (max-width:768px){
+
+  .container{
+    padding-left:10px !important;
+    padding-right:10px !important;
+  }
+
+  /* Products Grid */
+
+  .products-grid,
+  .featured-grid{
+    display:grid !important;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px !important;
+  }
+
+  /* Product Card */
+
+  .meesho-product-card{
+    border-radius:12px !important;
+    overflow:hidden;
+    width:100% !important;
+  }
+
+  .product-image{
+    height:140px !important;
+    object-fit:cover;
+  }
+
+  .product-info{
+    padding:8px !important;
+  }
+
+  .product-info h6{
+    font-size:13px !important;
+  }
+
+  /* Buttons */
+
+  .action-buttons{
+    display:flex;
+    gap:6px;
+  }
+
+  .add-cart-btn,
+  .view-btn{
+    flex:1;
+    height:36px !important;
+    font-size:12px !important;
+    border-radius:8px !important;
+  }
+
+  /* Flash Sale */
+
+  .flash-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .flash-header h2{
+    font-size:18px !important;
+  }
+
+  .countdown{
+    font-size:18px !important;
+    padding:10px 15px !important;
+  }
+
+  /* Featured Products */
+
+  section{
+    padding:12px !important;
+  }
+
+  section h2{
+    font-size:20px !important;
+  }
+
+}
+@media screen and (max-width:768px){
+
+  .action-buttons{
+    display:flex;
+    gap:6px;
+  }
+
+  .cart-btn,
+  .details-btn{
+
+    flex:1;
+
+    height:36px !important;
+
+    font-size:12px !important;
+
+    padding:0 !important;
+
+    border-radius:8px;
+  }
+
+  .product-card{
+    width:100% !important;
+  }
+
+  .product-image{
+    height:140px !important;
+    object-fit:cover;
+  }
+
+  .product-title{
+    font-size:13px !important;
+  }
+
+}

@@ -1,115 +1,217 @@
-import "../styles/product.css";
+import "./ProductCard.css";
 import { useCart } from "../context/CartContext";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useLoading } from "../context/LoadingContext";
+import { useState } from "react";
 
 function ProductCard({ product }) {
-  const { addToCart } = useCart();
 
-  const handleAddToCart = () => {
-    addToCart(product);
+const { addToCart } = useCart();
 
-    alert(
-      `${product.name} added to cart successfully`
-    );
-  };
+const navigate = useNavigate();
 
-  const gst = product.gst || 0;
+const {
+setLoading
+} = useLoading();
 
-  const gstAmount =
-    (Number(product.price) * gst) / 100;
+const [showToast, setShowToast] =
+useState(false);
 
-  const totalPrice =
-    Number(product.price) + gstAmount;
+const handleAddToCart = () => {
 
-  return (
-    <div className="product-card">
 
-      <div
-        style={{
-          position: "relative",
-        }}
-      >
-        {product.discount && (
-          <span className="discount-badge">
-            {product.discount}
-          </span>
-        )}
+addToCart(product);
 
-        <img
-          className="product-image"
-          src={product.image}
-          alt={product.name}
-          onError={(e) => {
-            e.target.src =
-              "https://via.placeholder.com/300x220?text=No+Image";
-          }}
-        />
-      </div>
+setShowToast(true);
 
-      <div className="product-content">
+setTimeout(() => {
 
-        <h3 className="product-name">
-          {product.name}
-        </h3>
+  setShowToast(false);
 
-        <p>
-          Category:{" "}
-          {product.category || "General"}
-        </p>
+}, 2000);
 
-        <p>
-          Price: ₹
-          {Number(product.price).toFixed(
-            2
-          )}
-        </p>
 
-        <p>
-          Stock: {product.stock}
-        </p>
+};
 
-        <p>
-          GST ({gst}%): ₹
-          {gstAmount.toFixed(2)}
-        </p>
+const openProduct = () => {
 
-        <h4
-          style={{
-            color: "#082A78",
-            fontWeight: "700",
-          }}
-        >
-          Total: ₹
-          {totalPrice.toFixed(2)}
-        </h4>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            marginTop: "15px",
-          }}
-        >
-          <button
-            className="product-btn"
-            onClick={handleAddToCart}
-          >
-            Add To Cart
-          </button>
+setLoading(true);
 
-          <Link
-            to={`/product/${
-              product._id || product.id
-            }`}
-            className="btn btn-outline-primary"
-          >
-            View Details
-          </Link>
+setTimeout(() => {
+
+  navigate(
+    `/product/${product._id || product.id}`
+  );
+
+  setLoading(false);
+
+}, 600);
+
+
+};
+
+const finalPrice =
+product.discount > 0
+? Math.floor(
+product.price -
+(product.price * product.discount) / 100
+)
+: product.price;
+
+const imageUrl =
+product?.images?.[0] ||
+product?.image ||
+null;
+
+return (
+<>
+{showToast && (
+
+
+    <div className="cart-toast">
+      ✅ Product Added To Cart
+    </div>
+
+  )}
+
+  <div className="product-card">
+
+    {/* IMAGE */}
+
+    <div className="product-image-wrapper">
+
+      {product.discount > 0 && (
+
+        <div className="sale-ribbon">
+          {product.discount}% OFF
         </div>
 
+      )}
+
+      <button className="wishlist-btn">
+        ♡
+      </button>
+
+      <div
+        className="product-image-link"
+        onClick={openProduct}
+        style={{
+          cursor: "pointer"
+        }}
+      >
+
+        {imageUrl ? (
+
+          <img
+            src={imageUrl}
+            alt={product.name}
+            className="product-image"
+            loading="lazy"
+          />
+
+        ) : (
+
+          <div
+            style={{
+              height: "220px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#f3f4f6",
+              color: "#666",
+              fontSize: "14px",
+            }}
+          >
+            No Image
+          </div>
+
+        )}
+
       </div>
+
     </div>
-  );
+
+    {/* CONTENT */}
+
+    <div className="product-content">
+
+      <h3 className="product-title">
+        {product.name}
+      </h3>
+
+      <p className="product-category">
+        {product.category}
+      </p>
+
+      <div className="product-price-row">
+
+        <span className="current-price">
+          ₹{finalPrice}
+        </span>
+
+        {product.discount > 0 && (
+
+          <span className="old-price">
+            ₹{product.price}
+          </span>
+
+        )}
+
+      </div>
+
+      <div className="rating-row">
+
+        <span className="rating-badge">
+          ⭐ {product.rating || "4.3"}
+        </span>
+
+        <span className="delivery-badge">
+          Free Delivery
+        </span>
+
+      </div>
+
+      <p
+        className={
+          product.stock > 0
+            ? "stock-available"
+            : "stock-unavailable"
+        }
+      >
+        {product.stock > 0
+          ? "✅ In Stock"
+          : "❌ Out Of Stock"}
+      </p>
+
+      <p className="sold-count">
+        120+ Sold Today
+      </p>
+
+      <div className="action-buttons">
+
+        <button
+          className="cart-btn"
+          onClick={handleAddToCart}
+          disabled={
+            product.stock === 0
+          }
+        >
+          {product.stock > 0
+            ? "Add"
+            : "Stock Out"}
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+</>
+
+
+);
+
 }
 
 export default ProductCard;

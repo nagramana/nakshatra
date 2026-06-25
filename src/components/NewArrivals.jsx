@@ -1,12 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import ProductCard from "./ProductCard";
-import "./FeaturedProducts.css";
+import "./NewArrivals.css";
 
 const API_URL =
   "https://nakshatra-mart-backend.onrender.com";
 
-function FeaturedProducts({
+function NewArrivals({
   selectedCategory = "All",
 }) {
 
@@ -27,13 +27,13 @@ function FeaturedProducts({
         `${API_URL}/api/products`
       );
 
-      const featuredProducts =
+      const newProducts =
         res.data.filter(
           (product) =>
-            product.featured === true
+            product.newArrival === true
         );
 
-      setProducts(featuredProducts);
+      setProducts(newProducts);
 
     } catch (error) {
 
@@ -68,7 +68,7 @@ function FeaturedProducts({
   const slideLeft = () => {
 
     sliderRef.current?.scrollBy({
-      left: -220,
+      left: -300,
       behavior: "smooth",
     });
 
@@ -77,7 +77,7 @@ function FeaturedProducts({
   const slideRight = () => {
 
     sliderRef.current?.scrollBy({
-      left: 220,
+      left: 300,
       behavior: "smooth",
     });
 
@@ -85,66 +85,65 @@ function FeaturedProducts({
 
   return (
 
-    <section className="featured-products">
+    <section
+      id="new-arrivals"
+      className="new-arrivals"
+    >
 
       <div className="section-header">
 
         <h2>
-          Best Selling Products
+          🆕 New Arrivals
         </h2>
 
       </div>
 
-      {filteredProducts.length > 0 ? (
+      <button
+        className="slider-arrow left"
+        onClick={slideLeft}
+      >
+        ‹
+      </button>
 
-        <>
+      <div
+        className="new-grid"
+        ref={sliderRef}
+      >
 
-          <button
-            className="slider-arrow left"
-            onClick={slideLeft}
-          >
-            ‹
-          </button>
+        {filteredProducts.length > 0 ? (
 
-          <div
-            className="featured-grid"
-            ref={sliderRef}
-          >
+          filteredProducts.map(
+            (product) => (
 
-            {filteredProducts.map(
-              (product) => (
+              <ProductCard
+                key={
+                  product._id ||
+                  product.id
+                }
+                product={product}
+              />
 
-                <ProductCard
-                  key={
-                    product._id ||
-                    product.id
-                  }
-                  product={product}
-                />
+            )
+          )
 
-              )
-            )}
+        ) : (
+
+          <div className="no-products">
+
+            No Products Found
 
           </div>
 
-          <button
-            className="slider-arrow right"
-            onClick={slideRight}
-          >
-            ›
-          </button>
+        )}
 
-        </>
+      </div>
 
-      ) : (
-
-        <div className="featured-empty">
-
-          No Products Found
-
-        </div>
-
-      )}
+      <button
+        className="slider-arrow right"
+        onClick={slideRight}
+      >
+        ›
+      </button>
 
     </section>
 
@@ -152,4 +151,4 @@ function FeaturedProducts({
 
 }
 
-export default FeaturedProducts;
+export default NewArrivals;

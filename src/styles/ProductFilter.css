@@ -1,0 +1,79 @@
+/* FILTER SIDEBAR */
+
+.product-filter {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+
+  /* REMOVE SCROLL */
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.filter-sidebar {
+  width: 100%;
+
+  /* REMOVE SCROLL */
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.filter-section {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 0;
+}
+
+.filter-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.filter-content {
+  padding-top: 12px;
+}
+
+.filter-content label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.filter-content input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.filter-content select,
+.filter-content input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+}
+
+.filter-content select:focus,
+.filter-content input:focus {
+  border-color: #6d28d9;
+}
+
+/* REMOVE ALL SCROLLBARS */
+
+.product-filter::-webkit-scrollbar,
+.filter-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.product-filter,
+.filter-sidebar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

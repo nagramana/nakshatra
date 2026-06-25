@@ -1,0 +1,268 @@
+/* ==========================================
+   FLASH SALE SECTION
+========================================== */
+
+.flash-sale-section{
+  position:relative;
+  width:100%;
+  padding:40px 20px;
+  margin:20px 0;
+  background:#f8fafc;
+  border-radius:24px;
+  overflow:hidden;
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.flash-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-bottom:30px;
+}
+
+.flash-title-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.flash-title{
+  margin:0;
+  font-size:36px;
+  font-weight:800;
+  color:#111827;
+  line-height:1;
+}
+
+.live-badge{
+  width:fit-content;
+  padding:7px 16px;
+  background:#22c55e;
+  color:#fff;
+  border-radius:50px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+/* ==========================================
+   VIEW ALL BUTTON
+========================================== */
+
+.view-all-btn{
+  text-decoration:none;
+  padding:12px 24px;
+  background:#ffffff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  font-size:14px;
+  font-weight:700;
+  color:#2563eb;
+  transition:0.3s;
+}
+
+.view-all-btn:hover{
+  background:#2563eb;
+  color:#fff;
+}
+
+/* ==========================================
+   TIMER
+========================================== */
+
+.flash-timer{
+  display:flex;
+  gap:12px;
+  background:linear-gradient(
+    135deg,
+    #ff4d4f,
+    #ff6b6b
+  );
+  padding:14px;
+  border-radius:18px;
+}
+
+.timer-box{
+  width:85px;
+  height:85px;
+  background:rgba(255,255,255,0.18);
+  backdrop-filter:blur(10px);
+  border-radius:14px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+.timer-box span{
+  color:#fff;
+  font-size:30px;
+  font-weight:800;
+  line-height:1;
+}
+
+.timer-box small{
+  color:#fff;
+  margin-top:6px;
+  font-size:12px;
+  font-weight:600;
+}
+
+/* ==========================================
+   PRODUCT SLIDER
+========================================== */
+
+.flash-slider{
+  display:flex;
+  gap:18px;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  scrollbar-width:none;
+  padding-bottom:10px;
+}
+
+.flash-slider::-webkit-scrollbar{
+  display:none;
+}
+
+.flash-item{
+  flex:0 0 280px;
+  min-width:280px;
+}
+
+/* ==========================================
+   ARROWS
+========================================== */
+
+.slider-arrow{
+  position:absolute;
+  top:60%;
+  transform:translateY(-50%);
+
+  width:48px;
+  height:48px;
+
+  border:none;
+  border-radius:50%;
+
+  background:#fff;
+  color:#111827;
+
+  font-size:22px;
+  font-weight:700;
+
+  box-shadow:
+    0 4px 15px rgba(0,0,0,.12);
+
+  cursor:pointer;
+  z-index:50;
+
+  transition:.3s;
+}
+
+.slider-arrow:hover{
+  transform:
+    translateY(-50%)
+    scale(1.08);
+}
+
+.slider-arrow.left{
+  left:0;
+}
+
+.slider-arrow.right{
+  right:0;
+}
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media(max-width:1024px){
+
+  .flash-title{
+    font-size:32px;
+  }
+
+  .flash-item{
+    flex:0 0 250px;
+    min-width:250px;
+  }
+
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media(max-width:768px){
+
+  .flash-sale-section{
+    padding:25px 15px;
+  }
+
+  .flash-header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .flash-title{
+    font-size:28px;
+  }
+
+  .flash-timer{
+    width:100%;
+    justify-content:center;
+  }
+
+  .timer-box{
+    width:70px;
+    height:70px;
+  }
+
+  .timer-box span{
+    font-size:24px;
+  }
+
+  .flash-item{
+    flex:0 0 220px;
+    min-width:220px;
+  }
+
+  .slider-arrow{
+    display:none;
+  }
+
+}
+
+/* ==========================================
+   SMALL MOBILE
+========================================== */
+
+@media(max-width:480px){
+
+  .flash-title{
+    font-size:24px;
+  }
+
+  .flash-item{
+    flex:0 0 180px;
+    min-width:180px;
+  }
+
+  .timer-box{
+    width:60px;
+    height:60px;
+  }
+
+  .timer-box span{
+    font-size:20px;
+  }
+
+}

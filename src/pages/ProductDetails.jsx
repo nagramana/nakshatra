@@ -1,131 +1,233 @@
-import { useParams } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  FaStar,
+  FaShoppingCart,
+  FaBolt,
+  FaTruck,
+  FaShieldAlt,
+  FaUndo,
+} from "react-icons/fa";
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import products from "../data/products";
+import { useCart } from "../context/CartContext";
+
+import "../styles/ProductDetails.css";
+
+const API_URL =
+  "https://nakshatra-mart-backend.onrender.com";
 
 function ProductDetails() {
   const { id } = useParams();
 
   const { addToCart } = useCart();
 
-  const product = products.find(
-    (item) => item.id === Number(id)
-  );
+  const [product, setProduct] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [qty, setQty] = useState(1);
 
-  if (!product) {
+  useEffect(() => {
+    fetchProduct();
+    fetchProducts();
+  }, [id]);
+
+  const fetchProduct = async () => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/products/${id}`
+      );
+
+      setProduct(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/products`
+      );
+
+      setProducts(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddToCart = () => {
+    for (let i = 0; i < qty; i++) {
+      addToCart(product);
+    }
+
+    alert("Added To Cart");
+  };
+
+  if (loading) {
     return (
       <>
         <Navbar />
-        <div className="container py-5">
-          <h2>Product Not Found</h2>
+        <div className="pd-loading">
+          Loading Product...
         </div>
         <Footer />
       </>
     );
   }
 
-  const gstAmount =
-    (product.price * product.gst) / 100;
+  if (!product) {
+    return (
+      <>
+        <Navbar />
+        <div className="pd-loading">
+          Product Not Found
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
-  const finalPrice =
-    product.price + gstAmount;
+  const similarProducts = products
+    .filter((p) => p._id !== product._id)
+    .slice(0, 8);
 
-  const handleAddToCart = () => {
-    addToCart(product);
-    alert(`${product.name} added to cart`);
-  };
+  const discountPrice =
+    product.price +
+    Math.floor(product.price * 0.2);
 
   return (
     <>
       <Navbar />
 
-      <div className="container py-5">
-        <div className="row">
+      <div className="product-details-page">
 
-          {/* Product Image */}
+        {/* HERO SECTION */}
 
-          <div className="col-md-5">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="img-fluid rounded shadow"
-            />
+        <div className="pd-hero">
+
+          {/* IMAGE */}
+
+          <div className="pd-image-section">
+            <div className="pd-image-card">
+              <img
+                src={product.image}
+                alt={product.name}
+              />
+            </div>
           </div>
 
-          {/* Product Information */}
+          {/* INFO */}
 
-          <div className="col-md-7">
+          <div className="pd-info-section">
 
-            <h2>{product.name}</h2>
+            <span className="pd-category">
+              {product.category}
+            </span>
 
-            <p className="text-success fw-bold">
-              {product.discount}
+            <h1 className="pd-title">
+              {product.name}
+            </h1>
+
+            <div className="pd-rating">
+              <FaStar />
+              <FaStar />
+              <FaStar />
+              <FaStar />
+              <FaStar />
+
+              <span>
+                4.8 (1,254 Reviews)
+              </span>
+            </div>
+
+            <div className="pd-price-row">
+              <h2>₹{product.price}</h2>
+
+              <span className="old-price">
+                ₹{discountPrice}
+              </span>
+
+              <span className="offer">
+                20% OFF
+              </span>
+            </div>
+
+            <p className="pd-description">
+              {product.description ||
+                "Premium quality product with fast delivery and easy returns."}
             </p>
 
-            <p>
-              ⭐⭐⭐⭐⭐ (4.5 Rating)
-            </p>
+            {/* TRUST */}
 
-            <hr />
+            <div className="pd-trust">
 
-            <h4>
-              Brand : {product.brand}
-            </h4>
+              <div className="trust-box">
+                <FaTruck />
+                <span>
+                  Free Delivery
+                </span>
+              </div>
 
-            <h3 style={{ color: "#082A78" }}>
-              ₹{product.price}
-            </h3>
+              <div className="trust-box">
+                <FaUndo />
+                <span>
+                  Easy Return
+                </span>
+              </div>
 
-            <p>
-              GST ({product.gst}%):
-              ₹{gstAmount.toFixed(2)}
-            </p>
+              <div className="trust-box">
+                <FaShieldAlt />
+                <span>
+                  Secure Payment
+                </span>
+              </div>
 
-            <h4 className="text-success">
-              Final Price:
-              ₹{finalPrice.toFixed(2)}
-            </h4>
+            </div>
 
-            <hr />
+            {/* QTY */}
 
-            <p>
-              {product.description}
-            </p>
-
-            <p>
-              <strong>Stock:</strong>
-              {" "}
-              {product.stock} Available
-            </p>
-
-            <p>
-              <strong>Delivery:</strong>
-              3-5 Working Days
-            </p>
-
-            <p>
-              <strong>Return Policy:</strong>
-              Return within 5 Days
-            </p>
-
-            <p>
-              <strong>Payment Method:</strong>
-              Cash On Delivery
-            </p>
-
-            <div className="d-flex gap-3 mt-4">
+            <div className="qty-wrapper">
 
               <button
-                className="btn btn-primary"
+                onClick={() =>
+                  qty > 1 &&
+                  setQty(qty - 1)
+                }
+              >
+                -
+              </button>
+
+              <span>{qty}</span>
+
+              <button
+                onClick={() =>
+                  setQty(qty + 1)
+                }
+              >
+                +
+              </button>
+
+            </div>
+
+            {/* BUTTONS */}
+
+            <div className="pd-buttons">
+
+              <button
+                className="cart-btn"
                 onClick={handleAddToCart}
               >
+                <FaShoppingCart />
                 Add To Cart
               </button>
 
-              <button
-                className="btn btn-success"
-              >
+              <button className="buy-btn">
+                <FaBolt />
                 Buy Now
               </button>
 
@@ -135,45 +237,109 @@ function ProductDetails() {
 
         </div>
 
-        {/* Product Specifications */}
+        {/* DETAILS */}
 
-        <div className="card mt-5">
-          <div className="card-body">
+        <div className="pd-details-card">
 
-            <h3>Product Details</h3>
+          <h2>
+            Product Details
+          </h2>
 
-            <table className="table">
-              <tbody>
+          <div className="detail-grid">
 
-                <tr>
-                  <td>Brand</td>
-                  <td>{product.brand}</td>
-                </tr>
+            <div>
+              <strong>
+                Category
+              </strong>
+              <p>
+                {product.category ||
+                  "General"}
+              </p>
+            </div>
 
-                <tr>
-                  <td>GST</td>
-                  <td>{product.gst}%</td>
-                </tr>
+            <div>
+              <strong>
+                Stock
+              </strong>
+              <p>
+                {product.stock || 0}
+              </p>
+            </div>
 
-                <tr>
-                  <td>Stock</td>
-                  <td>{product.stock}</td>
-                </tr>
+            <div>
+              <strong>
+                Delivery
+              </strong>
+              <p>
+                2-5 Days
+              </p>
+            </div>
 
-                <tr>
-                  <td>Return Policy</td>
-                  <td>5 Days Return</td>
-                </tr>
-
-                <tr>
-                  <td>Payment</td>
-                  <td>Cash On Delivery</td>
-                </tr>
-
-              </tbody>
-            </table>
+            <div>
+              <strong>
+                Availability
+              </strong>
+              <p>
+                In Stock
+              </p>
+            </div>
 
           </div>
+
+        </div>
+
+        {/* DESCRIPTION */}
+
+        <div className="pd-description-card">
+
+          <h2>
+            Description
+          </h2>
+
+          <p>
+            {product.description ||
+              "No description available for this product."}
+          </p>
+
+        </div>
+
+        {/* SIMILAR PRODUCTS */}
+
+        <div className="similar-section">
+
+          <h2>
+            Similar Products
+          </h2>
+
+          <div className="similar-grid">
+
+            {similarProducts.map(
+              (item) => (
+                <Link
+                  key={item._id}
+                  to={`/product/${item._id}`}
+                  className="similar-card"
+                >
+
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                  />
+
+                  <h4>
+                    {item.name}
+                  </h4>
+
+                  <p>
+                    ₹{item.price}
+                  </p>
+
+                </Link>
+              )
+            )}
+
+          </div>
+
         </div>
 
       </div>

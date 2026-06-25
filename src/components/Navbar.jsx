@@ -1,114 +1,435 @@
-import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
-import "../styles/navbar.css";
+import {
+Link,
+NavLink,
+useNavigate
+} from "react-router-dom";
+
+import {
+useState,
+useEffect
+} from "react";
+
+import {
+FaShoppingCart,
+FaUserCircle,
+FaSearch,
+FaBars,
+FaTimes,
+FaChevronDown,
+} from "react-icons/fa";
+
+import axios from "axios";
+
+import {
+useLoading
+} from "../context/LoadingContext";
+
+import {
+useCart
+} from "../context/CartContext";
+
+import "./Navbar.css";
+
+const API_URL =
+"https://nakshatra-mart-backend.onrender.com";
 
 function Navbar() {
-  const { cartItems } = useCart();
-  const { user, logout } = useAuth();
 
-  return (
-    <nav className="navbar navbar-expand-lg top-navbar">
-      <div className="container">
-        <Link className="brand-logo" to="/">
-          Nakshatra Mart
-        </Link>
+const navigate = useNavigate();
+
+const {
+setLoading
+} = useLoading();
+
+
+const {
+cartItems
+} = useCart();
+
+const [menuOpen, setMenuOpen] =
+useState(false);
+
+const [showProfile, setShowProfile] =
+useState(false);
+
+const [searchTerm, setSearchTerm] =
+useState("");
+
+const user = JSON.parse(
+localStorage.getItem("user")
+);
+
+const cartCount =
+cartItems.reduce(
+(total,item)=>
+total + item.quantity,
+0
+);
+
+useEffect(() => {
+
+
+const handleEsc = (e) => {
+
+  if (e.key === "Escape") {
+    setMenuOpen(false);
+  }
+
+};
+
+window.addEventListener(
+  "keydown",
+  handleEsc
+);
+
+return () =>
+  window.removeEventListener(
+    "keydown",
+    handleEsc
+  );
+
+
+}, []);
+
+const openPage = (path) => {
+
+
+setLoading(true);
+
+setTimeout(() => {
+
+  navigate(path);
+
+  setLoading(false);
+
+  setMenuOpen(false);
+
+}, 600);
+
+
+};
+
+const handleSearch = async (e) => {
+
+
+if (e.key !== "Enter") return;
+
+try {
+
+  const response =
+    await axios.get(
+      `${API_URL}/api/products`
+    );
+
+  const foundProduct =
+    response.data.find(
+      (product) =>
+        product.name
+          ?.toLowerCase()
+          .includes(
+            searchTerm.toLowerCase()
+          )
+    );
+
+  if (foundProduct) {
+
+    openPage(
+      `/product/${foundProduct._id}`
+    );
+
+  } else {
+
+    openPage(
+      `/products?search=${searchTerm}`
+    );
+
+  }
+
+} catch (error) {
+
+  console.log(error);
+
+}
+
+
+};
+
+const logout = () => {
+
+
+localStorage.removeItem("user");
+
+navigate("/login");
+
+window.location.reload();
+
+
+};
+
+return (
+<> <nav className="modern-navbar">
+
+
+    <button
+      className="navbar-logo"
+      onClick={() =>
+        openPage("/")
+      }
+    >
+      Nakshatra Mart
+    </button>
+
+    <div className="navbar-search">
+
+      <FaSearch />
+
+      <input
+        type="text"
+        placeholder="Search products..."
+        value={searchTerm}
+        onChange={(e) =>
+          setSearchTerm(
+            e.target.value
+          )
+        }
+        onKeyDown={handleSearch}
+      />
+
+    </div>
+
+    <div className="navbar-menu">
+
+      <button
+        className="nav-btn"
+        onClick={() =>
+          openPage("/")
+        }
+      >
+        Home
+      </button>
+
+      <button
+        className="nav-btn"
+        onClick={() =>
+          openPage("/products")
+        }
+      >
+        Products
+      </button>
+
+      <button
+className="nav-btn cart-btn"
+onClick={() =>
+openPage("/cart")
+}
+>
+<FaShoppingCart />
+
+Cart
+
+{cartCount > 0 && (
+
+<span className="cart-badge">
+
+{cartCount}
+
+</span>
+
+)}
+
+</button>
+
+      {!user ? (
 
         <button
-          className="navbar-toggler bg-light"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarContent"
+          className="nav-btn"
+          onClick={() =>
+            openPage("/login")
+          }
         >
-          ☰
+          Login
         </button>
 
+      ) : (
+
         <div
-          className="collapse navbar-collapse"
-          id="navbarContent"
+          className="profile-menu"
+          onClick={() =>
+            setShowProfile(
+              !showProfile
+            )
+          }
         >
-          <form className="mx-auto w-50">
-            <input
-              className="form-control search-box"
-              type="search"
-              placeholder="Search products..."
-            />
-          </form>
 
-          <ul className="navbar-nav align-items-center">
-            <li className="nav-item">
-              <Link
-                className="nav-link-custom px-3"
-                to="/"
+          <FaUserCircle />
+
+          <span>
+            Hello{" "}
+            {user.name ||
+              "User"}
+          </span>
+
+          <FaChevronDown />
+
+          {showProfile && (
+
+            <div className="profile-dropdown">
+
+              <button
+                className="dropdown-btn"
+                onClick={() =>
+                  openPage("/profile")
+                }
               >
-                Home
-              </Link>
-            </li>
+                My Profile
+              </button>
 
-            <li className="nav-item">
-              <Link
-                className="nav-link-custom px-3"
-                to="/products"
+              <button
+                className="dropdown-btn"
+                onClick={() =>
+                  openPage("/my-orders")
+                }
               >
-                Products
-              </Link>
-            </li>
+                My Orders
+              </button>
 
-            <li className="nav-item">
-              <Link
-                className="nav-link-custom px-3"
-                to="/cart"
+              <button
+                onClick={logout}
               >
-                Cart ({cartItems.length})
-              </Link>
-            </li>
+                Logout
+              </button>
 
-            {user ? (
-              <>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link-custom px-3"
-                    to="/profile"
-                  >
-                    {user.name}
-                  </Link>
-                </li>
+            </div>
 
-                <li className="nav-item">
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={logout}
-                  >
-                    Logout
-                  </button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="nav-item">
-                  <Link
-                    className="nav-link-custom px-3"
-                    to="/login"
-                  >
-                    Login
-                  </Link>
-                </li>
+          )}
 
-                <li className="nav-item">
-                  <Link
-                    className="btn btn-success btn-sm"
-                    to="/register"
-                  >
-                    Register
-                  </Link>
-                </li>
-              </>
-            )}
-          </ul>
         </div>
-      </div>
-    </nav>
-  );
+
+      )}
+
+    </div>
+
+    <button
+      className="mobile-menu-btn"
+      onClick={() =>
+        setMenuOpen(
+          !menuOpen
+        )
+      }
+    >
+      {menuOpen ? (
+        <FaTimes />
+      ) : (
+        <FaBars />
+      )}
+    </button>
+
+  </nav>
+
+  <div className="mobile-search-box">
+
+    <FaSearch />
+
+    <input
+      type="text"
+      placeholder="Search..."
+      value={searchTerm}
+      onChange={(e) =>
+        setSearchTerm(
+          e.target.value
+        )
+      }
+      onKeyDown={handleSearch}
+    />
+
+  </div>
+
+  {menuOpen && (
+
+    <>
+      <div
+        className="mobile-overlay"
+        onClick={() =>
+          setMenuOpen(false)
+        }
+      />
+
+      <aside className="mobile-menu">
+
+        <button
+          className="mobile-link"
+          onClick={() =>
+            openPage("/")
+          }
+        >
+          🏠 Home
+        </button>
+
+        <button
+          className="mobile-link"
+          onClick={() =>
+            openPage("/products")
+          }
+        >
+          📦 Products
+        </button>
+
+        <button
+          className="mobile-link"
+          onClick={() =>
+            openPage("/cart")
+          }
+        >
+          🛒 Cart
+        </button>
+
+        {user ? (
+          <>
+            <button
+              className="mobile-link"
+              onClick={() =>
+                openPage("/profile")
+              }
+            >
+              👤 Profile
+            </button>
+
+            <button
+              className="mobile-link"
+              onClick={() =>
+                openPage("/my-orders")
+              }
+            >
+              📋 My Orders
+            </button>
+
+            <button
+              className="logout-btn"
+              onClick={logout}
+            >
+              🚪 Logout
+            </button>
+          </>
+        ) : (
+          <button
+            className="mobile-link"
+            onClick={() =>
+              openPage("/login")
+            }
+          >
+            🔑 Login
+          </button>
+        )}
+
+      </aside>
+    </>
+  )}
+
+</>
+
+
+);
+
 }
 
 export default Navbar;

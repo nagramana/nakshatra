@@ -1,29 +1,55 @@
-.top-navbar {
-  background: #082A78;
-  padding: 12px 0;
+.meesho-navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 50px;
+background:white;
+border-bottom:1px solid #eee;
+position:sticky;
+top:0;
+z-index:1000;
 }
 
-.brand-logo {
-  color: #ffffff;
-  font-size: 28px;
-  font-weight: 700;
-  text-decoration: none;
+.logo{
+font-size:34px;
+font-weight:700;
+color:#9F2089;
 }
 
-.brand-logo:hover {
-  color: #ffffff;
+.search-box{
+width:45%;
+display:flex;
+align-items:center;
+border:1px solid #ddd;
+padding:10px;
+border-radius:6px;
+gap:10px;
 }
 
-.search-box {
-  border-radius: 8px;
+.search-box input{
+width:100%;
+border:none;
+outline:none;
 }
 
-.nav-link-custom {
-  color: #ffffff !important;
-  text-decoration: none;
-  font-weight: 500;
+.nav-right{
+display:flex;
+gap:25px;
+align-items:center;
 }
 
-.nav-link-custom:hover {
-  color: #AFC0DF !important;
+.nav-right a{
+text-decoration:none;
+color:#333;
+font-weight:500;
+}
+
+.category-bar{
+display:flex;
+justify-content:center;
+gap:40px;
+padding:12px;
+background:#fff;
+border-bottom:1px solid #eee;
+font-weight:500;
 }

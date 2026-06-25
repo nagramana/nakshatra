@@ -1,0 +1,292 @@
+/* ===================================
+   FEATURED PRODUCTS
+=================================== */
+
+.featured-products{
+  position:relative;
+  width:100%;
+  padding:20px 0;
+}
+
+/* ===================================
+   HEADER
+=================================== */
+
+.section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:15px;
+}
+
+.section-header h2{
+  font-size:28px;
+  font-weight:700;
+  margin:0;
+}
+
+/* ===================================
+   SINGLE ROW SCROLL
+=================================== */
+
+.featured-grid{
+
+  display:flex !important;
+
+  flex-wrap:nowrap !important;
+
+  gap:16px;
+
+  overflow-x:auto !important;
+
+  overflow-y:hidden !important;
+
+  width:100%;
+
+  scroll-behavior:smooth;
+
+  -webkit-overflow-scrolling:touch;
+
+  touch-action:pan-x;
+
+  scrollbar-width:none;
+
+  padding:10px;
+}
+
+.featured-grid::-webkit-scrollbar{
+  display:none;
+}
+
+/* ===================================
+   CARD
+=================================== */
+
+.featured-grid .product-card{
+
+  flex:0 0 auto !important;
+
+  width:280px !important;
+
+  min-width:280px !important;
+
+  max-width:280px !important;
+}
+
+/* ===================================
+   EMPTY STATE
+=================================== */
+
+.featured-empty{
+
+  width:100%;
+
+  min-height:120px;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  text-align:center;
+
+  font-size:22px;
+
+  font-weight:600;
+
+  color:#666;
+}
+
+/* ===================================
+   ARROWS
+=================================== */
+
+.slider-arrow{
+
+  position:absolute;
+
+  top:50%;
+
+  transform:translateY(-50%);
+
+  width:42px;
+
+  height:42px;
+
+  border:none;
+
+  border-radius:50%;
+
+  background:#fff;
+
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+
+  cursor:pointer;
+
+  z-index:999;
+
+  font-size:22px;
+
+  font-weight:bold;
+}
+
+.slider-arrow.left{
+  left:-5px;
+}
+
+.slider-arrow.right{
+  right:-5px;
+}
+
+/* ===================================
+   TABLET
+=================================== */
+
+@media(max-width:1024px){
+
+  .featured-grid .product-card{
+
+    width:220px !important;
+
+    min-width:220px !important;
+
+    max-width:220px !important;
+  }
+
+}
+
+/* ===================================
+   MOBILE
+=================================== */
+
+@media(max-width:768px){
+
+  .featured-products{
+    overflow:hidden;
+  }
+
+  .section-header h2{
+    font-size:22px;
+  }
+
+  .featured-grid{
+
+    display:flex !important;
+
+    flex-wrap:nowrap !important;
+
+    overflow-x:auto !important;
+
+    overflow-y:hidden !important;
+
+    gap:12px;
+
+    padding:10px;
+  }
+
+  .featured-grid .product-card{
+
+    flex:0 0 auto !important;
+
+    width:180px !important;
+
+    min-width:180px !important;
+
+    max-width:180px !important;
+  }
+
+  .slider-arrow{
+
+    width:34px;
+
+    height:34px;
+
+    font-size:18px;
+  }
+
+}
+
+/* ===================================
+   SMALL MOBILE
+=================================== */
+
+@media(max-width:480px){
+
+  .featured-grid .product-card{
+
+    width:170px !important;
+
+    min-width:170px !important;
+
+    max-width:170px !important;
+  }
+
+}
+
+.featured-grid{
+
+  display:flex !important;
+
+  flex-wrap:nowrap !important;
+
+  overflow-x:auto !important;
+
+  overflow-y:hidden !important;
+
+  width:100%;
+
+  gap:12px;
+
+  padding:10px;
+
+  scroll-behavior:smooth;
+
+  -webkit-overflow-scrolling:touch;
+
+  touch-action:pan-x;
+
+  scrollbar-width:none;
+}
+
+.featured-grid::-webkit-scrollbar{
+  display:none;
+}
+
+.featured-grid > *{
+  flex:0 0 auto !important;
+}
+
+@media(max-width:768px){
+
+  .featured-products{
+    width:100%;
+    overflow:hidden;
+  }
+
+  .featured-grid{
+
+    display:flex !important;
+
+    flex-wrap:nowrap !important;
+
+    overflow-x:auto !important;
+
+    overflow-y:hidden !important;
+
+    white-space:nowrap;
+
+    gap:12px;
+  }
+
+  .featured-grid .product-card{
+
+    flex:0 0 auto !important;
+
+    width:180px !important;
+
+    min-width:180px !important;
+
+    max-width:180px !important;
+  }
+}

@@ -18,9 +18,61 @@ function TrackOrder() {
           </div>
         ) : (
           orders.map((order) => {
+
+            let trackingSteps =
+              order.trackingSteps || [];
+
+            if (
+              order.returnStatus ===
+              "Approved"
+            ) {
+              trackingSteps = [
+                "Order Placed",
+                "Confirmed",
+                "Shipped",
+                "Delivered",
+                "Return Requested",
+                "Return Approved",
+                "Order Returned",
+              ];
+            }
+
+            if (
+              order.returnStatus ===
+              "Rejected"
+            ) {
+              trackingSteps = [
+                "Order Placed",
+                "Confirmed",
+                "Shipped",
+                "Delivered",
+                "Return Requested",
+                "Return Rejected",
+              ];
+            }
+
+            let currentStatus =
+              order.orderStatus;
+
+            if (
+              order.returnStatus ===
+              "Approved"
+            ) {
+              currentStatus =
+                "Order Returned";
+            }
+
+            if (
+              order.returnStatus ===
+              "Rejected"
+            ) {
+              currentStatus =
+                "Return Rejected";
+            }
+
             const currentIndex =
-              order.trackingSteps?.indexOf(
-                order.orderStatus
+              trackingSteps.indexOf(
+                currentStatus
               );
 
             return (
@@ -29,20 +81,23 @@ function TrackOrder() {
                 className="card shadow mb-4"
               >
                 <div className="card-body">
+
                   <div className="d-flex justify-content-between align-items-center">
                     <h5>
                       Order ID: {order.id}
                     </h5>
 
                     <span className="badge bg-primary">
-                      {order.orderStatus}
+                      {currentStatus}
                     </span>
                   </div>
 
                   <hr />
 
                   <div className="row">
+
                     <div className="col-md-6">
+
                       <p>
                         <strong>
                           Customer:
@@ -71,13 +126,17 @@ function TrackOrder() {
                           order.createdAt
                         }
                       </p>
+
                     </div>
 
                     <div className="col-md-6 text-md-end">
+
                       <h5 className="text-success">
                         ₹{order.total}
                       </h5>
+
                     </div>
+
                   </div>
 
                   <hr />
@@ -87,15 +146,14 @@ function TrackOrder() {
                   </h5>
 
                   <div>
-                    {order.trackingSteps?.map(
+
+                    {trackingSteps.map(
                       (
                         step,
                         index
                       ) => (
                         <div
-                          key={
-                            index
-                          }
+                          key={index}
                           className="d-flex align-items-center mb-3"
                         >
                           <div
@@ -123,22 +181,25 @@ function TrackOrder() {
                           >
                             {step}
                           </span>
+
                         </div>
                       )
                     )}
+
                   </div>
 
                   <hr />
 
                   <div className="alert alert-info">
+
                     Current Status:
                     <strong>
                       {" "}
-                      {
-                        order.orderStatus
-                      }
+                      {currentStatus}
                     </strong>
+
                   </div>
+
                 </div>
               </div>
             );

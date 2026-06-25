@@ -1,46 +1,105 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-const AuthContext = createContext();
+import axios from "axios";
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+const AuthContext =
+  createContext();
+
+export const AuthProvider = ({
+  children,
+}) => {
+  const [user, setUser] =
+    useState(null);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
+    const savedUser =
+      localStorage.getItem(
+        "user"
+      );
+
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      setUser(
+        JSON.parse(savedUser)
+      );
     }
   }, []);
 
-  const register = (name, email, password) => {
-    const userData = { name, email, password };
+  const register = async (
+    name,
+    email,
+    password
+  ) => {
+    try {
+      const response =
+        await axios.post(
+          "http://localhost:5000/api/users/register",
+          {
+            name,
+            email,
+            password,
+          }
+        );
 
-    localStorage.setItem("registeredUser", JSON.stringify(userData));
-    localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem(
+        "user",
+        JSON.stringify(
+          response.data.user
+        )
+      );
 
-    setUser(userData);
+      setUser(
+        response.data.user
+      );
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   };
 
-  const login = (email, password) => {
-    const savedUser = JSON.parse(
-      localStorage.getItem("registeredUser")
-    );
+  const login = async (
+    email,
+    password
+  ) => {
+    try {
+      const response =
+        await axios.post(
+          "http://localhost:5000/api/users/login",
+          {
+            email,
+            password,
+          }
+        );
 
-    if (
-      savedUser &&
-      savedUser.email === email &&
-      savedUser.password === password
-    ) {
-      localStorage.setItem("user", JSON.stringify(savedUser));
-      setUser(savedUser);
+      localStorage.setItem(
+        "user",
+        JSON.stringify(
+          response.data.user
+        )
+      );
+
+      setUser(
+        response.data.user
+      );
+
       return true;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
-
-    return false;
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem(
+      "user"
+    );
+
     setUser(null);
   };
 
@@ -58,4 +117,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () =>
+  useContext(AuthContext);
