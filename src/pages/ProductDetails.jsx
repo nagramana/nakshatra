@@ -16,8 +16,7 @@ import { useCart } from "../context/CartContext";
 
 import "../styles/ProductDetails.css";
 
-const API_URL =
-  "https://nakshatra-mart-backend.onrender.com";
+const API_URL = "http://localhost:5000";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -28,10 +27,19 @@ function ProductDetails() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
+  const [reviews, setReviews] = useState([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+
+  const [rating, setRating] = useState(5);
+
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
     fetchProduct();
+
     fetchProducts();
+
+    fetchReviews();
   }, [id]);
 
   const fetchProduct = async () => {
@@ -60,6 +68,104 @@ function ProductDetails() {
     }
   };
 
+
+
+  const fetchReviews = async () => {
+
+    try {
+
+      const res = await axios.get(
+        `${API_URL}/api/reviews/${id}`
+      );
+
+      setReviews(res.data);
+
+    } catch (err) {
+
+      console.log(err);
+
+    }
+
+  };
+
+
+
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  const submitReview = async () => {
+
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
+
+    if (!comment.trim()) {
+      alert("Please write your review.");
+      return;
+    }
+
+    try {
+
+      await axios.post(
+        `${API_URL}/api/reviews`,
+        {
+
+          productId: id,
+
+          userId: user._id,
+
+          userName: user.name,
+
+          userImage:
+            user.profileImage || "",
+
+          rating,
+
+          comment,
+
+        }
+      );
+
+      alert("Review Submitted Successfully");
+
+      setComment("");
+
+      setRating(5);
+
+      setShowReviewModal(false);
+
+      fetchReviews();
+
+    } catch (err) {
+
+  console.log("========== ERROR ==========");
+
+  console.log(err);
+
+  console.log("STATUS:", err.response?.status);
+
+  console.log("DATA:", err.response?.data);
+
+  console.log("REQUEST BODY:", {
+    productId: id,
+    userId: user?._id,
+    userName: user?.name,
+    userImage: user?.profileImage,
+    rating,
+    comment,
+  });
+
+  alert(
+    err.response?.data?.message ||
+    "Unable to Submit Review"
+  );
+
+}
+
+  };
+
   const handleAddToCart = () => {
     for (let i = 0; i < qty; i++) {
       addToCart(product);
@@ -67,6 +173,13 @@ function ProductDetails() {
 
     alert("Added To Cart");
   };
+
+
+
+
+
+
+
 
   if (loading) {
     return (
@@ -114,10 +227,13 @@ function ProductDetails() {
 
           <div className="pd-image-section">
             <div className="pd-image-card">
+
               <img
                 src={product.image}
                 alt={product.name}
+                className="main-product-image"
               />
+
             </div>
           </div>
 
@@ -157,9 +273,23 @@ function ProductDetails() {
               </span>
             </div>
 
+            <div className="product-highlights">
+
+              <span>✔ Premium Quality</span>
+
+              <span>✔ Fast Delivery</span>
+
+              <span>✔ Easy Returns</span>
+
+              <span>✔ Secure Payment</span>
+
+            </div>
+
             <p className="pd-description">
+
               {product.description ||
                 "Premium quality product with fast delivery and easy returns."}
+
             </p>
 
             {/* TRUST */}
@@ -226,7 +356,13 @@ function ProductDetails() {
                 Add To Cart
               </button>
 
-              <button className="buy-btn">
+              <button
+                className="buy-btn"
+                onClick={() => {
+                  handleAddToCart();
+                  window.location.href = "/checkout";
+                }}
+              >
                 <FaBolt />
                 Buy Now
               </button>
@@ -290,16 +426,187 @@ function ProductDetails() {
 
         {/* DESCRIPTION */}
 
-        <div className="pd-description-card">
+        {/* DESCRIPTION + REVIEWS */}
 
-          <h2>
-            Description
-          </h2>
+        <div className="review-wrapper">
 
-          <p>
-            {product.description ||
-              "No description available for this product."}
-          </p>
+          {/* LEFT SIDE */}
+
+          <div className="rating-box">
+
+            <h2>Description</h2>
+
+            <p className="product-desc">
+              {product.description ||
+                "No description available for this product."}
+            </p>
+
+            <hr />
+
+            <h2>Customer Rating</h2>
+
+            <div className="rating-score">
+
+              <h1>4.8</h1>
+
+              <div>
+
+                <span className="stars">
+                  ★★★★★
+                </span>
+
+                <p>
+                  1,254 Ratings
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="rating-bar">
+
+              <label>5 ★</label>
+
+              <progress
+                value="90"
+                max="100"
+              ></progress>
+
+            </div>
+
+            <div className="rating-bar">
+
+              <label>4 ★</label>
+
+              <progress
+                value="70"
+                max="100"
+              ></progress>
+
+            </div>
+
+            <div className="rating-bar">
+
+              <label>3 ★</label>
+
+              <progress
+                value="35"
+                max="100"
+              ></progress>
+
+            </div>
+
+            <div className="rating-bar">
+
+              <label>2 ★</label>
+
+              <progress
+                value="15"
+                max="100"
+              ></progress>
+
+            </div>
+
+            <div className="rating-bar">
+
+              <label>1 ★</label>
+
+              <progress
+                value="5"
+                max="100"
+              ></progress>
+
+            </div>
+
+          </div>
+
+          {/* RIGHT SIDE */}
+
+          <div className="comments-box">
+
+            <div className="review-header">
+
+              <h2>
+                Customer Reviews
+              </h2>
+
+              <button
+                className="review-btn"
+                onClick={() => setShowReviewModal(true)}
+              >
+                Write Review
+              </button>
+
+            </div>
+
+            {/* Reviews */}
+
+            {reviews.length === 0 ? (
+
+              <div className="empty-review">
+
+                No Reviews Yet
+
+              </div>
+
+            ) : (
+
+              reviews
+                .slice(0, 30)
+                .map((review) => (
+
+                  <div
+                    key={review._id}
+                    className="comment-card"
+                  >
+
+                    <div className="comment-header">
+
+                      {review.userImage ? (
+
+                        <img
+                          src={review.userImage}
+                          alt={review.userName}
+                          className="review-avatar"
+                        />
+
+                      ) : (
+
+                        <div className="avatar">
+
+                          {review.userName
+                            ?.charAt(0)
+                            .toUpperCase()}
+
+                        </div>
+
+                      )}
+
+                      <div>
+
+                        <h4>
+                          {review.userName}
+                        </h4>
+
+                        <span className="stars">
+                          {"★".repeat(review.rating)}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                    <p>
+                      {review.comment}
+                    </p>
+
+                  </div>
+
+                ))
+
+            )}
+
+          </div>
 
         </div>
 
@@ -311,32 +618,42 @@ function ProductDetails() {
             Similar Products
           </h2>
 
-          <div className="similar-grid">
+          <div className="similar-slider">
 
-            {similarProducts.map(
-              (item) => (
-                <Link
-                  key={item._id}
-                  to={`/product/${item._id}`}
-                  className="similar-card"
-                >
+            {similarProducts.map((item) => (
+
+              <Link
+                key={item._id}
+                to={`/product/${item._id}`}
+                className="similar-card"
+              >
+
+                <div className="similar-image">
 
                   <img
                     src={item.image}
                     alt={item.name}
                   />
 
-                  <h4>
-                    {item.name}
-                  </h4>
+                </div>
 
-                  <p>
+                <div className="similar-content">
+
+                  <h4>{item.name}</h4>
+
+                  <p className="similar-price">
                     ₹{item.price}
                   </p>
 
-                </Link>
-              )
-            )}
+                  <button>
+                    View Product
+                  </button>
+
+                </div>
+
+              </Link>
+
+            ))}
 
           </div>
 
@@ -344,6 +661,103 @@ function ProductDetails() {
 
       </div>
 
+
+      <div className="mobile-buy-bar">
+
+        <button
+          className="mobile-cart-btn"
+          onClick={handleAddToCart}
+        >
+          Add To Cart
+        </button>
+
+        <button
+          className="mobile-buy-btn"
+          onClick={() => {
+            handleAddToCart();
+            window.location.href = "/checkout";
+          }}
+        >
+          Buy Now
+        </button>
+
+      </div>
+
+      {showReviewModal && (
+
+        <div
+          className="review-modal"
+          onClick={() =>
+            setShowReviewModal(false)
+          }
+        >
+
+          <div
+            className="review-popup"
+            onClick={(e) => e.stopPropagation()}
+          >
+
+            <h2>Write Review</h2>
+
+            <div className="rating-select">
+
+              <select
+                value={rating}
+                onChange={(e) => setRating(Number(e.target.value))}
+              >
+
+                <option value={5}>★★★★★</option>
+                <option value={4}>★★★★☆</option>
+                <option value={3}>★★★☆☆</option>
+                <option value={2}>★★☆☆☆</option>
+                <option value={1}>★☆☆☆☆</option>
+
+              </select>
+
+            </div>
+
+            <textarea
+
+              placeholder="Write your review..."
+
+              value={comment}
+
+              onChange={(e) => setComment(e.target.value)}
+
+            />
+
+            <div className="popup-buttons">
+
+              <button
+                className="cancel-btn"
+                onClick={() => {
+                  setShowReviewModal(false);
+                  setComment("");
+                  setRating(5);
+                }}
+              >
+                Cancel
+              </button>
+
+              <button
+
+                className="submit-btn"
+
+                onClick={submitReview}
+
+              >
+
+                Submit Review
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
       <Footer />
     </>
   );
