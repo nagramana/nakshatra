@@ -7,6 +7,7 @@ import {
   useEffect,
 } from "react";
 
+const API_URL = "https://nakshatra-mart-backend.onrender.com";
 
 
 
@@ -18,190 +19,124 @@ export const useOrders = () => {
 
 export const OrderProvider = ({ children }) => {
   const [orders, setOrders] =
-  useState([]);
+    useState([]);
 
   const fetchOrders = async () => {
-  try {
-    const response =
-      await axios.get(
-        "http://localhost:5000/api/orders"
-      );
+    try {
+      const response =
+        await axios.get(
+  `${API_URL}/api/orders`
+);
 
-    setOrders(response.data);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-useEffect(() => {
-  fetchOrders();
-}, []);
-
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setOrders((prevOrders) =>
-        prevOrders.map((order) => {
-          const createdTime =
-            new Date(
-              order.createdAt
-            ).getTime();
-
-          const now =
-            new Date().getTime();
-
-          const hoursPassed =
-            (now - createdTime) /
-            (1000 * 60 * 60);
-
-          let status =
-            "Order Placed";
-
-          let progress = 25;
-
-          if (hoursPassed >= 45) {
-            status = "Confirmed";
-            progress = 50;
-          }
-
-          if (hoursPassed >= 90) {
-            status = "Shipped";
-            progress = 75;
-          }
-
-          if (hoursPassed >= 135) {
-            status = "Delivered";
-            progress = 100;
-          }
-
-          return {
-            ...order,
-            orderStatus: status,
-            progress,
-          };
-        })
-      );
-    }, 60000);
-
-    return () =>
-      clearInterval(interval);
-  }, []);
-
-  // Place Order
-//   useEffect(() => {
-//   const interval = setInterval(() => {
-//     setOrders((prevOrders) =>
-//       prevOrders.map((order) => {
-//         const createdTime =
-//           new Date(order.createdAt).getTime();
-
-//         const now = Date.now();
-
-//         const hoursPassed =
-//           (now - createdTime) /
-//           (1000 * 60 * 60);
-
-//         let status =
-//           "Order Placed";
-
-//         let progress = 25;
-
-//         if (hoursPassed >= 45) {
-//           status = "Confirmed";
-//           progress = 50;
-//         }
-
-//         if (hoursPassed >= 90) {
-//           status = "Shipped";
-//           progress = 75;
-//         }
-
-//         if (hoursPassed >= 135) {
-//           status = "Delivered";
-//           progress = 100;
-//         }
-
-//         return {
-//           ...order,
-//           orderStatus: status,
-//           progress,
-//         };
-//       })
-//     );
-//   }, 60000);
-
-//   return () =>
-//     clearInterval(interval);
-// }, []);
-
-// Place Order
-const placeOrder = async (
-  orderData
-) => {
-
-  const newOrder = {
-    id: orderData.id,
-
-    customer:
-      orderData.customer || {},
-
-    items:
-      orderData.items || [],
-
-    total:
-      orderData.total || 0,
-
-    paymentMethod:
-      orderData.paymentMethod ||
-      "Cash On Delivery",
-
-    orderStatus:
-      "Order Placed",
-
-    createdAt:
-      new Date(),
-
-    progress: 25,
-
-    returnEligible: true,
-
-    returnRequested: false,
-
-    returnStatus: null,
-
-    trackingSteps: [
-      "Order Placed",
-      "Confirmed",
-      "Packed",
-      "Shipped",
-      "Out For Delivery",
-      "Delivered",
-    ],
+      setOrders(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  console.log(
-    "Sending Order",
-    newOrder
-  );
+  
 
-  try {
+  // Place Order
+  //   useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setOrders((prevOrders) =>
+  //       prevOrders.map((order) => {
+  //         const createdTime =
+  //           new Date(order.createdAt).getTime();
 
-    const response =
-  await axios.post(
-    "http://localhost:5000/api/orders",
-    newOrder
-  );
+  //         const now = Date.now();
 
-await fetchOrders();
+  //         const hoursPassed =
+  //           (now - createdTime) /
+  //           (1000 * 60 * 60);
 
-return response.data.order;
+  //         let status =
+  //           "Order Placed";
 
-  } catch (error) {
+  //         let progress = 25;
 
-    console.log(error);
+  //         if (hoursPassed >= 45) {
+  //           status = "Confirmed";
+  //           progress = 50;
+  //         }
 
-  }
+  //         if (hoursPassed >= 90) {
+  //           status = "Shipped";
+  //           progress = 75;
+  //         }
+
+  //         if (hoursPassed >= 135) {
+  //           status = "Delivered";
+  //           progress = 100;
+  //         }
+
+  //         return {
+  //           ...order,
+  //           orderStatus: status,
+  //           progress,
+  //         };
+  //       })
+  //     );
+  //   }, 60000);
+
+  //   return () =>
+  //     clearInterval(interval);
+  // }, []);
+
+  // Place Order
+  const placeOrder = async (
+    orderData
+  ) => {
+
+    const newOrder = {
+
+  ...orderData,
+
+  createdAt: new Date(),
+
+  progress:
+    orderData.progress || 25,
+
+  returnEligible: true,
+
+  returnRequested: false,
+
+  returnStatus: null,
+
+  trackingSteps:
+  orderData.trackingSteps || [
+    "Pending",
+    "Ordered",
+    "Processing",
+    "Shipped",
+    "Out for Delivery",
+    "Delivered",
+  ],
+
 };
+    console.log(
+      "Sending Order",
+      newOrder
+    );
+
+    try {
+
+  const response =
+  await axios.post(
+    `${API_URL}/api/orders`,
+    newOrder
+  );
+
+      await fetchOrders();
+
+      return response.data.order;
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+  };
 
   // Update Status
   const updateOrderStatus = (
@@ -222,38 +157,38 @@ return response.data.order;
 
   // Return Request
   const requestReturn = async (
-  orderId,
-  reason
-) => {
-  
-  try {
-    await axios.put(
-      `http://localhost:5000/api/orders/return/${orderId}`,
-      {
-        reason,
-      }
-    );
+    orderId,
+    reason
+  ) => {
 
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order._id === orderId
-          ? {
+    try {
+      await axios.put(
+  `${API_URL}/api/orders/return/${orderId}`,
+  {
+    reason,
+  }
+);
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === orderId
+            ? {
               ...order,
               returnRequested: true,
               returnStatus: "Pending",
               returnReason: reason,
             }
-          : order
-      )
-    );
+            : order
+        )
+      );
 
-    alert(
-      "Return Request Submitted"
-    );
-  } catch (error) {
-    console.log(error);
-  }
-};
+      alert(
+        "Return Request Submitted"
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Approve Return
   const approveReturn = (
@@ -305,23 +240,23 @@ return response.data.order;
 
   // Clear All Orders
   const clearOrders = () => {
-  setOrders([]);
-};
+    setOrders([]);
+  };
 
   return (
     <OrderContext.Provider
-  value={{
-    orders,
-    fetchOrders,
-    placeOrder,
-    updateOrderStatus,
-    requestReturn,
-    approveReturn,
-    rejectReturn,
-    deleteOrder,
-    clearOrders,
-  }}
->
+      value={{
+        orders,
+        fetchOrders,
+        placeOrder,
+        updateOrderStatus,
+        requestReturn,
+        approveReturn,
+        rejectReturn,
+        deleteOrder,
+        clearOrders,
+      }}
+    >
       {children}
     </OrderContext.Provider>
   );

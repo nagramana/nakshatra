@@ -1,10 +1,17 @@
 import {
   useState,
   useEffect,
+  useRef,
 } from "react";
+
+import { io } from "socket.io-client";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useOrders } from "../context/OrderContext";
+
+
+const API_URL =
+  "https://nakshatra-mart-backend.onrender.com";
 
 function MyOrders() {
   const {
@@ -21,46 +28,137 @@ function MyOrders() {
     setReturnReason] =
     useState("");
 
-  // Auto Refresh Orders
-  useEffect(() => {
-    fetchOrders();
 
-    const interval =
-      setInterval(() => {
-        fetchOrders();
-      }, 5000);
+    // ======================================
+// NOTIFICATION SOUND
+// ======================================
 
-    return () =>
-      clearInterval(
-        interval
+const notificationSound = useRef(
+  new Audio(
+    "https://res.cloudinary.com/dzosvvlib/video/upload/v1782734034/mixkit-clinking-coins-1993_uudse4.wav"
+  )
+);
+
+const playNotification = () => {
+
+  notificationSound.current.currentTime = 0;
+
+  notificationSound.current.play().catch((err) => {
+
+    console.log("Audio Error:", err);
+
+  });
+
+};
+
+  // ======================================
+// SOCKET CONNECTION
+// ======================================
+
+useEffect(() => {
+
+  // Load Orders First
+  fetchOrders();
+
+  // Connect Socket
+  const socket = io(API_URL);
+
+  socket.on("connect", () => {
+
+    console.log(
+      "✅ User Connected:",
+      socket.id
+    );
+
+  });
+
+  // ======================================
+  // PAYMENT APPROVED
+  // ======================================
+
+  socket.on(
+    "payment-approved",
+    (data) => {
+
+      console.log(data);
+
+      playNotification();
+
+      alert(
+        "🎉 Payment Approved!\n\nYour payment has been approved successfully."
       );
-  }, []);
+
+      fetchOrders();
+
+    }
+  );
+
+  // ======================================
+  // PAYMENT REJECTED
+  // ======================================
+
+  socket.on(
+    "payment-rejected",
+    (data) => {
+
+      console.log(data);
+
+      playNotification();
+
+      alert(
+        "❌ Payment Rejected!\n\nReason : " +
+        data.message
+      );
+
+      fetchOrders();
+
+    }
+  );
+
+  socket.on("disconnect", () => {
+
+    console.log(
+      "❌ User Disconnected"
+    );
+
+  });
+
+  return () => {
+
+    socket.disconnect();
+
+  };
+
+}, []);
 
 
   const getProgress = (status) => {
-    switch (status) {
-      case "Order Placed":
-        return 16;
+  switch (status) {
+    case "Pending":
+      return 10;
 
-      case "Confirmed":
-        return 33;
+    case "Ordered":
+      return 20;
 
-      case "Packed":
-        return 50;
+    case "Processing":
+      return 40;
 
-      case "Shipped":
-        return 66;
+    case "Shipped":
+      return 60;
 
-      case "Out For Delivery":
-        return 83;
+    case "Out for Delivery":
+      return 80;
 
-      case "Delivered":
-        return 100;
+    case "Delivered":
+      return 100;
 
-      default:
-        return 16;
-    }
-  };
+    case "Order Returned":
+      return 100;
+
+    default:
+      return 10;
+  }
+};
 
   // Check Return Eligibility
   const canReturn = (order) => {
@@ -361,12 +459,12 @@ function MyOrders() {
   }}
 >
 
-  <small>Ordered</small>
-  <small>Confirmed</small>
-  <small>Packed</small>
-  <small>Shipped</small>
-  <small>Out For Delivery</small>
-  <small>Delivered</small>
+  <small>Pending</small>
+<small>Ordered</small>
+<small>Processing</small>
+<small>Shipped</small>
+<small>Out For Delivery</small>
+<small>Delivered</small>
 
   {order.returnRequested && (
     <small
